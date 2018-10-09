@@ -10,10 +10,10 @@ class Dot extends React.Component {
       <Circle
         x={this.props.x}
         y={this.props.y}
-        radius={constant.DOT_RADIUS}
+        radius={constant.DOT_RADIUS * (this.props.now ? 1.5 : 1)}
         fill={constant.COLOR_DOT_CORE}
         stroke={constant.COLOR_LESS_20}
-        strokeWidth={constant.DOT_STROKE_WIDTH}
+        strokeWidth={constant.DOT_STROKE_WIDTH * (this.props.now ? 1.5 : 1)}
       />
     );
   }

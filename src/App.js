@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Stage, Layer, Group, Circle, Line } from 'react-konva';
+import { Stage, Layer, Group, Circle, Line, Label, Text } from 'react-konva';
 import Konva from 'konva';
 import BackgroundImage from './asset/bg.jpg';
 import Dot from './Dot';
@@ -14,6 +14,9 @@ class App extends Component {
     scopeMaxX: null,
     scopeMaxY: null,
     data: {},
+  }
+  labelCache = {
+    
   }
   refresh = () => {
     fetch('/api/fake').then(results => results.json()).then(data => {
@@ -90,11 +93,28 @@ class App extends Component {
       x1,
       y1
     };
+
+    return {
+      x1: x - width / 2,
+      y1: y - deltaY - height
+    }
   }
   checkAreaEmpty = (x1,x2,y1,y2) => {
-    for(let x = x1;x<x2;x+=5) {
-      for(let y=y1;y<y2;y+=5) {
-        if(this.stageRef.getIntersection({x,y}) != undefined) return false;
+    for (let x = x1; x < x2; x += 5) {
+      for (let y = y1; y < y2; y += 5) {
+        if (x < 0 || x > window.innerWidth || y < 0 || y > window.innerHeight) return false;
+        let node = this.stageRef.getIntersection({
+          x,
+          y
+        });
+        // Here may cause bug. When overlapping with other text element it won't avoid
+        if (node != undefined && node.className !== 'Text') {
+          console.log(this.stageRef.getIntersection({
+            x,
+            y
+          }))
+          return false;
+        }
       }
     }
     return true;
@@ -107,11 +127,11 @@ class App extends Component {
       opacity: 0.9,
     }
     return (
-      <Stage ref={this.stageRef} style={stageStyle} width={window.innerWidth} height={window.innerHeight}>
+      <Stage ref={r => {if(r!=null) this.stageRef = r.getStage()}} style={stageStyle} width={window.innerWidth} height={window.innerHeight}>
       {
         Object.entries(this.state.data).map(([k,v]) => 
         [
-          <Layer zIndex={2} key={k}>
+          <Layer zIndex={2} key={k+v.time}>
             <Line stroke={constant.COLOR_MORE_60}
               strokeWidth={constant.PATH_STROKE_WIDTH}
               lineJoin="round"
@@ -145,21 +165,52 @@ class App extends Component {
               points={v.points.filter(p => (Date.now() - p.time) <= constant.DOT_DISAPPEAR_SECOND * 1000).reduce((acc,cur)=>{acc.push(cur.x,cur.y);return acc;}, [])}
             />
             {
-              v.points.length === 0 ? null: 
-              <Group>
-                <Circle
-                x={v.points[0].x}
-                y={v.points[0].y}
-                radius={constant.DOT_RADIUS*1.2}
-                fill={this.getColor(v.points[0].time)}
-                />
-                
-              </Group>
+              (() => {
+                if(v.points.length === 0) return null;
+                let {x1,y1} = this.getRandomPositionForLabel(v.points[0].x, v.points[0].y, 69, 28, constant.DOT_RADIUS*2.4, constant.DOT_RADIUS*2.4);
+                return <Group>
+                  <Circle
+                  x={v.points[0].x}
+                  y={v.points[0].y}
+                  radius={constant.DOT_RADIUS*1.2}
+                  fill={this.getColor(v.points[0].time)}
+                  />
+                  <Label x={x1 - constant.DOT_RADIUS*0.6} y={y1 - constant.DOT_RADIUS*0.6} >
+                    <Text text='START'
+                      fontFamily='Calibri'
+                      fontSize={28}
+                      padding={5}
+                      fill='white' />    
+                  </Label>
+                </Group>
+              })()
+              
             }
           </Layer>,
           <Layer zIndex={3} key={k}>
           {
-            v.points.filter((p,i) => i !== 0 && i % 5 !== 4 && (Date.now() - p.time) <= constant.DOT_DISAPPEAR_SECOND * 1000).map(p => <Dot x={p.x} y={p.y} />)
+            v.points.filter((p,i) => i !== 0 && i !== v.points.length-1 && i % 5 !== 4 && (Date.now() - p.time) <= constant.DOT_DISAPPEAR_SECOND * 1000).map(p => <Dot x={p.x} y={p.y} />)
+          }
+          {
+            (() => {
+              if(v.points.length === 0) return null;
+              let nowPoint = v.points[v.points.length - 1];
+              let {x1,y1} = this.getRandomPositionForLabel(nowPoint.x, nowPoint.y, 61, 28, constant.DOT_RADIUS*3.0, constant.DOT_RADIUS*3.0);
+              return <Group>
+                <Dot
+                x={nowPoint.x}
+                y={nowPoint.y}
+                now={true}
+                />
+                <Label x={x1 - constant.DOT_RADIUS*0.6} y={y1 - constant.DOT_RADIUS*0.6} >
+                  <Text ref={r=>{window.mj=r}}text='NOW'
+                    fontFamily='Calibri'
+                    fontSize={28}
+                    padding={5}
+                    fill='white' />    
+                </Label>
+              </Group>
+            })()
           }
           </Layer>
         ])
