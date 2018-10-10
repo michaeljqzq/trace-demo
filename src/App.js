@@ -23,17 +23,37 @@ class App extends Component {
   }
 
   config = {
-    slidingFactor: 0,
   }
 
   refresh = () => {
     fetch('/api/fake').then(results => results.json()).then(data => {
+      let pointMap = new Map();
+      let pointArray = data.values;
+      for(let point of pointArray) {
+        if(!pointMap.has(point.id)) {
+          pointMap.set(point.id, {
+            points: []
+          });
+        }
+        pointMap.get(point.id).points.push(point);
+      }
+      for(let [k,v] of pointMap) {
+        let active = false;
+        let now = Date.now();
+        for(let point of v.points) {
+          if(now - point.time < constant.ACTIVE_TIME_SPAN * 1000) {
+            active = true;
+            break;
+          }
+        }
+        v.active = active;
+      }
       this.setState({
         scopeMinX: data.scope.minX,
         scopeMinY: data.scope.minY,
         scopeMaxX: data.scope.maxX,
         scopeMaxY: data.scope.maxY,
-        data: data.values,
+        data: pointMap,
       })
     }).catch(e => {
       console.error(e);
@@ -185,7 +205,7 @@ class App extends Component {
       backgroundImage: `url(${this.state.background})`,
       backgroundRepeat: `no-repeat`,
       backgroundSize: `cover`,
-      opacity: 0.9,
+      // opacity: 0.9,
     }
     return (
       <div>
@@ -199,7 +219,7 @@ class App extends Component {
       {
         Object.entries(this.state.data).map(([k,v]) => 
         [
-          <Layer zIndex={2} key={k+v.time}>
+          <Layer zIndex={2} key={k}>
             <Label x={v.points[0].x} y={v.points[0].y - constant.DOT_RADIUS} labelColor='rgb(79,78,151)' labelText='START' />
             <Line stroke={constant.COLOR_MORE_40}
               strokeWidth={constant.PATH_STROKE_WIDTH}

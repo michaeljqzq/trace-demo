@@ -59,9 +59,9 @@ function generateRandomPoint() {
 setInterval(generateRandomPoint, 1000);
 
 router.get('/', (req, res) => {
-  let values = {};
+  let values = [];
   for(let [k,v] of peoples) {
-    values[k] = v;
+    values.push(...v.points);
   }
   res.json({
     values,
