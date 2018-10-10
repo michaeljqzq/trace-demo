@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Stage, Layer, Group, Circle, Line, Label, Text } from 'react-konva';
+import { Stage, Layer, Group, Circle, Line, Rect } from 'react-konva';
 import Konva from 'konva';
 import BackgroundImage from './asset/bg.jpg';
 import Dot from './Dot';
+import Label from './Label';
 import constant from './constant';
+import util from './util';
 
+// TODO:
+// 0.2s to draw the trace
+// shadow of real-time track
 class App extends Component {
   state = {
     scopeMinX: null,
@@ -14,10 +19,13 @@ class App extends Component {
     scopeMaxX: null,
     scopeMaxY: null,
     data: {},
+    background: BackgroundImage,
   }
-  labelCache = {
-    
+
+  config = {
+    slidingFactor: 0,
   }
+
   refresh = () => {
     fetch('/api/fake').then(results => results.json()).then(data => {
       this.setState({
@@ -27,17 +35,24 @@ class App extends Component {
         scopeMaxY: data.scope.maxY,
         data: data.values,
       })
+    }).catch(e => {
+      console.error(e);
     });
   }
+
   getX(x) {
     return window.innerWidth * (x - this.state.scopeMinX) / (this.state.scopeMaxX - this.state.scopeMinX);
   }
+
   getY(y) {
     return window.innerHeight * (y - this.state.scopeMinY) / (this.state.scopeMaxY - this.state.scopeMinY);
   }
+
   componentDidMount() {
     setInterval(this.refresh, 500);
+    this.fetchBackgroundImage();
   }
+
   getApiDomain() {
     // if(config.apiDomain) {
     //   return config.apiDomain;
@@ -45,13 +60,14 @@ class App extends Component {
     let domain = "https://" + window.location.hostname;
     return process.env.NODE_ENV === 'development' ? '' : domain;
   }
+
   getColor(time) {
     let timeSpan = (Date.now() - time) / 1000;
     if(timeSpan <= 20) return constant.COLOR_LESS_20;
     if(timeSpan <= 40) return constant.COLOR_LESS_40;
-    if(timeSpan <= 60) return constant.COLOR_LESS_60;
-    return constant.COLOR_MORE_60;
+    return constant.COLOR_MORE_40;
   }
+
   getRandomPositionForLabel = (x, y, width, height, deltaX, deltaY) => {
     let x1, x2, y1, y2;
     // Check up
@@ -99,6 +115,7 @@ class App extends Component {
       y1: y - deltaY - height
     }
   }
+
   checkAreaEmpty = (x1,x2,y1,y2) => {
     for (let x = x1; x < x2; x += 5) {
       for (let y = y1; y < y2; y += 5) {
@@ -119,34 +136,78 @@ class App extends Component {
     }
     return true;
   }
+
+  handleUpload = (ev) => {
+    ev.preventDefault();
+
+    const data = new FormData();
+    data.append('file', this.uploadInput.files[0]);
+    // data.append('filename', "background-image");
+
+    fetch('/api/backend/background', {
+      method: 'POST',
+      body: data,
+    })
+      .then(res => {
+        if(res.ok) {
+          this.fetchBackgroundImage(true);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  fetchBackgroundImage = (hardRefresh) => {
+    fetch('/api/backend/background')
+      .then(res => {
+        if(res.ok) {
+          if(hardRefresh) {
+            this.setState({
+              background: ''
+            },() => {
+              this.setState({
+                background: '/api/backend/background'
+              });
+            });
+          }else {
+            this.setState({
+              background: '/api/backend/background'
+            });
+          }
+          
+        }
+      })
+  }
+
   render() {
     let stageStyle = {
-      backgroundImage: `url(${BackgroundImage})`,
+      backgroundImage: `url(${this.state.background})`,
       backgroundRepeat: `no-repeat`,
       backgroundSize: `cover`,
       opacity: 0.9,
     }
     return (
+      <div>
+        <form class="hidden-form" onChange={this.handleUpload} action="/api/backend/background" method="post" enctype="multipart/form-data">
+          <input ref={r=> {this.uploadInput = r}} type="file" name="background" />
+        </form>
       <Stage ref={r => {if(r!=null) this.stageRef = r.getStage()}} style={stageStyle} width={window.innerWidth} height={window.innerHeight}>
+      <Layer>
+        <Rect width={20} height={20} x={0} y={0} onClick={() => {this.uploadInput.click()}}/>
+      </Layer>
       {
         Object.entries(this.state.data).map(([k,v]) => 
         [
           <Layer zIndex={2} key={k+v.time}>
-            <Line stroke={constant.COLOR_MORE_60}
+            <Label x={v.points[0].x} y={v.points[0].y - constant.DOT_RADIUS} labelColor='rgb(79,78,151)' labelText='START' />
+            <Line stroke={constant.COLOR_MORE_40}
               strokeWidth={constant.PATH_STROKE_WIDTH}
               lineJoin="round"
               lineCap="round"
               tension={0.5}
               // bezier={true}
               points={v.points.reduce((acc,cur)=>{acc.push(cur.x,cur.y);return acc;}, [])}
-            />
-            <Line stroke={constant.COLOR_LESS_60}
-              strokeWidth={constant.PATH_STROKE_WIDTH}
-              lineJoin="round"
-              lineCap="round"
-              tension={0.5}
-              // bezier={true}
-              points={v.points.filter(p => (Date.now() - p.time) <= 60 * 1000).reduce((acc,cur)=>{acc.push(cur.x,cur.y);return acc;}, [])}
             />
             <Line stroke={constant.COLOR_LESS_40}
               strokeWidth={constant.PATH_STROKE_WIDTH}
@@ -167,21 +228,14 @@ class App extends Component {
             {
               (() => {
                 if(v.points.length === 0) return null;
-                let {x1,y1} = this.getRandomPositionForLabel(v.points[0].x, v.points[0].y, 69, 28, constant.DOT_RADIUS*2.4, constant.DOT_RADIUS*2.4);
+                // let {x1,y1} = this.getRandomPositionForLabel(v.points[0].x, v.points[0].y, 69, 28, constant.DOT_RADIUS*2.4, constant.DOT_RADIUS*2.4);
                 return <Group>
-                  <Circle
-                  x={v.points[0].x}
-                  y={v.points[0].y}
-                  radius={constant.DOT_RADIUS*1.2}
-                  fill={this.getColor(v.points[0].time)}
-                  />
-                  <Label x={x1 - constant.DOT_RADIUS*0.6} y={y1 - constant.DOT_RADIUS*0.6} >
-                    <Text text='START'
-                      fontFamily='Calibri'
-                      fontSize={28}
-                      padding={5}
-                      fill='white' />    
-                  </Label>
+                  <Dot x={v.points[0].x}
+                    y={v.points[0].y}
+                    white={true}
+                    // labelColor='rgb(79,78,151)'
+                    // label='START' 
+                    />
                 </Group>
               })()
               
@@ -189,33 +243,20 @@ class App extends Component {
           </Layer>,
           <Layer zIndex={3} key={k}>
           {
-            v.points.filter((p,i) => i !== 0 && i !== v.points.length-1 && i % 5 !== 4 && (Date.now() - p.time) <= constant.DOT_DISAPPEAR_SECOND * 1000).map(p => <Dot x={p.x} y={p.y} />)
-          }
-          {
-            (() => {
-              if(v.points.length === 0) return null;
-              let nowPoint = v.points[v.points.length - 1];
-              let {x1,y1} = this.getRandomPositionForLabel(nowPoint.x, nowPoint.y, 61, 28, constant.DOT_RADIUS*3.0, constant.DOT_RADIUS*3.0);
-              return <Group>
-                <Dot
-                x={nowPoint.x}
-                y={nowPoint.y}
-                now={true}
-                />
-                <Label x={x1 - constant.DOT_RADIUS*0.6} y={y1 - constant.DOT_RADIUS*0.6} >
-                  <Text ref={r=>{window.mj=r}}text='NOW'
-                    fontFamily='Calibri'
-                    fontSize={28}
-                    padding={5}
-                    fill='white' />    
-                </Label>
-              </Group>
-            })()
+            v.points.filter((p,i) => i !== 0 &&
+              (Date.now() - p.time) <= constant.DOT_DISAPPEAR_SECOND * 1000)
+              .map((p, i, arr) => <Dot x={p.x}
+                y={p.y}
+                head={i === arr.length - 1}
+                white={new Date(p.time).getSeconds() % constant.DOT_SPAN === 0 ? true : null}
+                label={new Date(p.time).getSeconds() % constant.DOT_SPAN === 0 ? util.convertTime(p.time) : null}
+                labelColor={constant.COLOR_TIME_LABEL} />)
           }
           </Layer>
         ])
       }
       </Stage>
+      </div>
     );
   }
 }

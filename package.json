@@ -5,6 +5,7 @@
   "dependencies": {
     "express": "^4.16.3",
     "konva": "^2.4.1",
+    "multer": "^1.4.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-konva": "^1.7.15",
