@@ -14,11 +14,19 @@ class Dot extends React.Component {
           y={this.props.y}
           radius={constant.DOT_RADIUS}
           fill={constant.COLOR_DOT_CORE}
-          stroke={this.props.head ? 'rgb(251,225,98)' : (this.props.white ? 'white' : constant.COLOR_LESS_20)}
+          stroke={this.props.color}
           strokeWidth={constant.DOT_STROKE_WIDTH}
+          onMouseEnter={this.props.onMouseEnter}
+          onMouseLeave={this.props.onMouseLeave}
         />
         {
-          this.props.label && <Label x={this.props.x} y={this.props.y - constant.DOT_RADIUS} labelColor={this.props.labelColor} labelText={this.props.label} />
+          this.props.label && <Label x={this.props.x} 
+            y={this.props.y - constant.DOT_RADIUS}
+            labelColor={this.props.labelColor}
+            labelText={this.props.label}
+            onMouseEnter={this.props.onMouseEnter}
+            onMouseLeave={this.props.onMouseLeave}
+            />
         }
       </Group>
     );

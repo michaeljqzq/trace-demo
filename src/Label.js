@@ -22,6 +22,14 @@ class Label extends React.Component {
     });
   }
 
+  static getDerivedStateFromProps = (props, state) => {
+    if(!this.textRef) return;
+    return {
+      rectX: props.x - this.textRef.width() / 2 - constant.LABEL_TEXT_LR_PADDING,
+      rectY: props.y - constant.LABEL_PIN_HEIGHT - this.textRef.height()
+    }
+  }
+
   render() {
     return (
       <Group>
@@ -29,13 +37,19 @@ class Label extends React.Component {
           width={this.state.rectWidth} 
           height={this.state.rectHeight} 
           fill={this.props.labelColor}
-          cornerRadius={20} />
+          cornerRadius={20}
+          onMouseEnter={this.props.onMouseEnter}
+          onMouseLeave={this.props.onMouseLeave} 
+          />
         <Text x={this.state.rectX + constant.LABEL_TEXT_LR_PADDING} y={this.state.rectY} ref={ r => {this.textRef = r;}} text={this.props.labelText}
           fontFamily='Segoe UI'
           fontSize={20}
           padding={5}
           fill='white'
-          align='center' />
+          align='center' 
+          onMouseEnter={this.props.onMouseEnter}
+          onMouseLeave={this.props.onMouseLeave} 
+          />
         <Rect x={this.props.x - constant.LABEL_PIN_WIDTH / 2} y={this.props.y - constant.LABEL_PIN_HEIGHT} 
           width={constant.LABEL_PIN_WIDTH} 
           height={constant.LABEL_PIN_HEIGHT} 

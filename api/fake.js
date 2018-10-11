@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const uuid = require('uuid/v4');
 
-const NUM_OF_PEOPLE = 1;
+const NUM_OF_PEOPLE = 2;
 const MAXX = 1000;
 const MAXY = 600;
 const MAXSPEED = 50;
