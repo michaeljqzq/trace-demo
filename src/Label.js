@@ -22,11 +22,13 @@ class Label extends React.Component {
     });
   }
 
-  static getDerivedStateFromProps = (props, state) => {
-    if(!this.textRef) return;
-    return {
-      rectX: props.x - this.textRef.width() / 2 - constant.LABEL_TEXT_LR_PADDING,
-      rectY: props.y - constant.LABEL_PIN_HEIGHT - this.textRef.height()
+  componentWillReceiveProps(nextProps) {
+    // You don't have to do this check first, but it can help prevent an unneeded render
+    if (nextProps.x !== this.props.x || nextProps.y !== this.props.y) {
+      this.setState({
+        rectX: nextProps.x - this.textRef.width() / 2 - constant.LABEL_TEXT_LR_PADDING,
+        rectY: nextProps.y - constant.LABEL_PIN_HEIGHT - this.textRef.height()
+      });
     }
   }
 

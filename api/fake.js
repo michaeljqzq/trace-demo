@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const uuid = require('uuid/v4');
 
-const NUM_OF_PEOPLE = 2;
+const NUM_OF_PEOPLE = 3;
 const MAXX = 1000;
 const MAXY = 600;
 const MAXSPEED = 50;
@@ -14,7 +14,6 @@ for (let i = 0; i < NUM_OF_PEOPLE; i++) {
   peoples.set(uuid(), {points:[]});
 }
 
-let points = [];
 for (let [k,v] of peoples) {
   let deltaX = Math.random() * MAXSPEED * 2 - MAXSPEED;
   let deltaY = Math.random() * MAXSPEED * 2 - MAXSPEED;
@@ -66,9 +65,9 @@ router.get('/', (req, res) => {
   res.json({
     values,
     scope: {
-      minX: 0,
+      // minX: 0,
       maxX: MAXX,
-      miny: 0,
+      // miny: 0,
       maxY: MAXY,
     }
   });

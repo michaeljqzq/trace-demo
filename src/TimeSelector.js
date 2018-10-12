@@ -9,6 +9,7 @@ const TOTAL_LENGTH = 100;
 const RECT_HEIGHT = 5;
 const BAR_HEIGHT = 30;
 const BAR_WIDTH = 10;
+const COLOR = '#555';
 
 const LIMIT_MIN = 1;
 
@@ -40,7 +41,7 @@ class TimeSelector extends React.Component {
           y={this.props.y - RECT_HEIGHT / 2}
           width={TOTAL_LENGTH}
           height={RECT_HEIGHT}
-          fill='white'
+          fill={COLOR}
           cornerRadius={RECT_HEIGHT}
         />
         <Rect 
@@ -48,7 +49,7 @@ class TimeSelector extends React.Component {
           y={this.props.y - BAR_HEIGHT / 2}
           width={BAR_WIDTH}
           height={BAR_HEIGHT}
-          fill='blue'
+          fill={COLOR}
           cornerRadius={RECT_HEIGHT}
           draggable={true}
           dragBoundFunc={pos => {
@@ -81,7 +82,7 @@ class TimeSelector extends React.Component {
           text={this.state.limit === constant.LIMIT_INF ? "Not limited" : `${this.state.limit} mins`}
           fontFamily='Segoe UI'
           fontSize={10}
-          fill='white'
+          fill={COLOR}
           align='center' 
           />
       </Group>

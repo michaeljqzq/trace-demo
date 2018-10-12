@@ -32,6 +32,16 @@ const constant = {
   DISPLAY_INACTIVE_HOVER: 2,
   DISPLAY_ACTIVE: 3,
   LIMIT_INF: 61,
+  HEAT_MAP_PIXEL_SCALE: 20,
+  HEAT_MAP_MULTIPLY_FACTOR: 5,
+  HEAT_MAP_BLUR_RADIUS: 40,
+  COLOR_HEAT: [
+    '#001047',
+    '#005566',
+    '#00ff00',
+    '#fff200',
+    '#ff0000',
+  ]
 }
 
 export default constant;
