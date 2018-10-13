@@ -44,7 +44,7 @@ class Label extends React.Component {
           onMouseLeave={this.props.onMouseLeave} 
           />
         <Text x={this.state.rectX + constant.LABEL_TEXT_LR_PADDING} y={this.state.rectY} ref={ r => {this.textRef = r;}} text={this.props.labelText}
-          fontFamily='Segoe UI'
+          fontFamily={constant.FONT_FAMILY}
           fontSize={20}
           padding={5}
           fill='white'

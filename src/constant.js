@@ -45,6 +45,7 @@ const constant = {
   ROUTER_PATH_HEATMAP: 'heatmap',
   CAMERA_LIMIT_X: 1000,
   CAMERA_LIMIT_Y: 600,
+  FONT_FAMILY: 'Helvetica Neue',
 
   DB_HOST: "https://techsummitdemo.documents.azure.com:443/",
   DB_KEY: "YQxOABk7IleRNoc6jcglAYXoRiCldTVLpfk5GjWz6MrpOGADnO0LQUmZZInAl7gKrmKeokt7HvCVluvN37XAPA==",

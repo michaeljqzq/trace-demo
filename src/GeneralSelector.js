@@ -83,7 +83,7 @@ class GeneralSelector extends React.Component {
           x={this.props.x + TOTAL_LENGTH / 2 - BAR_WIDTH / 2 + 20} 
           y={this.props.y - RECT_HEIGHT / 2 - 3} 
           text={this.state.limit}
-          fontFamily='Segoe UI'
+          fontFamily={constant.FONT_FAMILY}
           fontSize={10}
           fill={COLOR}
           align='center' 
