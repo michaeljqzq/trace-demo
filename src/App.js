@@ -15,9 +15,9 @@ import { withRouter } from 'react-router-dom';
 // TODO:
 
 // today:
-// router change will remount app component
 // data interface
 // heatmap para configure item
+// fix bug: switch route be blocked
 
 // 0.2s to draw the trace
 // shadow of real-time track
@@ -81,7 +81,7 @@ class App extends Component {
   }
 
   refresh = () => {
-    fetch('/api/fake').then(results => results.json()).then(data => {
+    fetch('/api/data').then(results => results.json()).then(data => {
       
       let now = new Date();
       let pointArray = data.values;
@@ -106,7 +106,7 @@ class App extends Component {
   componentDidMount() {
     console.log('App component mounted');
     this.fetchBackgroundImage();
-    setInterval(this.refresh, 500);
+    setInterval(this.refresh, 1000 * constant.WEB_REFRESH_INTERVAL);
   }
 
   render() {
@@ -119,12 +119,14 @@ class App extends Component {
       position: 'fixed'
       // opacity: 0.9,
     }
+    let isRouteHeatmap = false;
+    if(this.props.location.pathname.includes(constant.ROUTER_PATH_HEATMAP)) isRouteHeatmap = true;
     return (<div className='app' id='app' style={backgroundStyle}>
       <form className="hidden-form" onChange={this.handleUpload} action="/api/backend/background" method="post" encType="multipart/form-data">
           <input ref={r=> {this.uploadInput = r}} type="file" name="background" />
         </form>
       {
-        this.props.location.pathname.includes(constant.ROUTER_PATH_HEATMAP) && 
+        isRouteHeatmap && 
         <Heatmap data={this.state.data} />
       }
       <Stage ref={r => {if(r!=null) this.stageRef = r.getStage();}} style={stageStyle} width={window.innerWidth} height={window.innerHeight}>
@@ -133,21 +135,21 @@ class App extends Component {
         
           <RouterSelector
             x={window.innerWidth / 2 - constant.ROUTER_SELECTOR_WIDTH}
-            selected={this.props.location.pathname.includes(constant.ROUTER_PATH_TRACE)}
+            selected={!isRouteHeatmap}
             text='TRACE'
             path={constant.ROUTER_PATH_TRACE}
             onClick={() => {this.uploadInput.click()}}
           />
           <RouterSelector
             x={window.innerWidth / 2}
-            selected={this.props.location.pathname.includes(constant.ROUTER_PATH_HEATMAP)}
+            selected={isRouteHeatmap}
             text='HEATMAP'
             path={constant.ROUTER_PATH_HEATMAP}
             onClick={() => {this.uploadInput.click()}}
           />
         </Layer>
         {
-          this.props.location.pathname.includes(constant.ROUTER_PATH_TRACE) && 
+          !isRouteHeatmap && 
           <Dashboard data={this.state.data} />
         }
                 

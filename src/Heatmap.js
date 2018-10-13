@@ -34,13 +34,13 @@ class Heatmap extends React.Component {
           for(let y=0;y<heatMap[x].length;y++) {
             if(heatMap[x][y]) {
               points.push({
-                x:x*SCALE,y:y*SCALE,value: this.getColor(heatMap[x][y])+1
+                x:x*SCALE,y:y*SCALE,value: this.getColor(heatMap[x][y], constant.HEAT_MAP_LEVEL)
               });
             }
           }
         }
         this.heatmap.setData({
-          max: 5,
+          max: constant.HEAT_MAP_LEVEL,
           data: points//[{x:window.innerWidth - 100, y:window.innerHeight - 100, value:5}]
         });
       });
@@ -71,12 +71,11 @@ class Heatmap extends React.Component {
     if(parent && child) parent.removeChild(child);
   }
 
-  getColor(heatValue) {
+  getColor(heatValue, max) {
     if (heatValue === 0) return null;
     let v = Math.floor(Math.log10(heatValue*constant.HEAT_MAP_MULTIPLY_FACTOR));
-    if (v > constant.COLOR_HEAT.length - 1) v = constant.COLOR_HEAT.length - 1;
+    if (v > max) v = max;
     return v;
-    // return constant.COLOR_HEAT[v];
   }
 
   render() {

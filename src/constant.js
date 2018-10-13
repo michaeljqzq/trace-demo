@@ -1,4 +1,5 @@
 const constant = {
+  WEB_REFRESH_INTERVAL: 1,
   COLOR_DOT_CORE: "black",
   COLOR_ACTIVE_SCHEMA: [{
     COLOR_LESS_20: "rgb(66,255,246)",
@@ -33,20 +34,21 @@ const constant = {
   DISPLAY_INACTIVE_HOVER: 2,
   DISPLAY_ACTIVE: 3,
   LIMIT_INF: 61,
+  HEAT_MAP_LEVEL: 5,
   HEAT_MAP_PIXEL_SCALE: 20,
   HEAT_MAP_MULTIPLY_FACTOR: 5,
   HEAT_MAP_BLUR_RADIUS: 50,
-  COLOR_HEAT: [
-    '#001047',
-    '#005566',
-    '#00ff00',
-    '#fff200',
-    '#ff0000',
-  ],
   ROUTER_SELECTOR_WIDTH: 90,
   ROUTER_SELECTOR_HEIGHT: 28,
   ROUTER_PATH_TRACE: 'trace',
   ROUTER_PATH_HEATMAP: 'heatmap',
+  CAMERA_LIMIT_X: 1000,
+  CAMERA_LIMIT_Y: 600,
+
+  DB_HOST: "https://techsummitdemo.documents.azure.com:443/",
+  DB_KEY: "YQxOABk7IleRNoc6jcglAYXoRiCldTVLpfk5GjWz6MrpOGADnO0LQUmZZInAl7gKrmKeokt7HvCVluvN37XAPA==",
+  DB_DATABASE_ID: "ToDoList",
+  DB_COLLECTION_ID: "Items",
 }
 
-export default constant;
+module.exports = constant;
