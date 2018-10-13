@@ -23,13 +23,21 @@ async function insertData(item) {
   await container.items.create(item);
 }
 
+async function clear() {
+  if(!database) database = (await client.databases.createIfNotExists(databaseDefinition)).database;
+ 
+  if(!container) container = (await database.containers.createIfNotExists(collectionDefinition)).container;
+ 
+  await container.delete();
+}
+
 const NUM_OF_PEOPLE = 3;
 const MAXX = constant.CAMERA_LIMIT_X;
 const MAXY = constant.CAMERA_LIMIT_Y;
 const MAXSPEED = 50;
 const MINSPEED = 30;
 const DIR_CHANGE_RATE = 20;
-const PUSH_TO_DB = true;
+const PUSH_TO_DB = false;
 
 let peoples = new Map();
 for (let i = 0; i < NUM_OF_PEOPLE; i++) {
@@ -99,8 +107,7 @@ async function generateRandomPoint() {
   }
 }
 
-init();
-let interval = setInterval(generateRandomPoint, 1000);
+let interval;
 
 router.get('/', (req, res) => {
   let values = [];
@@ -118,11 +125,27 @@ router.get('/', (req, res) => {
   });
 });
 
+router.get('/start', (req, res) => {
+  init();
+  interval = setInterval(generateRandomPoint, 1000);
+  res.json({
+    
+  });
+});
+
 router.get('/stop', (req, res) => {
   clearInterval(interval);
   res.json({
     
   });
 });
+
+router.get('/clear', (req, res) => {
+  clear();
+  res.json({
+    
+  });
+});
+
 
 module.exports = router;

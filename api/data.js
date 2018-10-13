@@ -15,7 +15,7 @@ let database = null;
 let container = null;
  
 async function query() {
-  if(!database) database = (await client.databases.createIfNotExists(databaseDefinition)).database;
+  if(!database) {database = (await client.databases.createIfNotExists(databaseDefinition)).database; console.log('init db')}
  
   if(!container) container = (await database.containers.createIfNotExists(collectionDefinition)).container;
  
