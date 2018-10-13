@@ -9,7 +9,6 @@ class Heatmap extends React.Component {
   state = {
     heatMap: [],
   }
-  temp=-1
 
   constructor(props) {
     super(props);
@@ -63,6 +62,13 @@ class Heatmap extends React.Component {
       container: document.getElementById('app'),
       backgroundColor: constant.COLOR_HEATMAP_BACKGROUND,
     });
+  }
+
+  componentWillUnmount() {
+    let parent = document.getElementById("app");
+    parent.style.position = 'absolute';
+    let child = document.getElementsByClassName('heatmap-canvas')[0];
+    if(parent && child) parent.removeChild(child);
   }
 
   getColor(heatValue) {

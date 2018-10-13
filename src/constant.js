@@ -42,7 +42,11 @@ const constant = {
     '#00ff00',
     '#fff200',
     '#ff0000',
-  ]
+  ],
+  ROUTER_SELECTOR_WIDTH: 90,
+  ROUTER_SELECTOR_HEIGHT: 28,
+  ROUTER_PATH_TRACE: 'trace',
+  ROUTER_PATH_HEATMAP: 'heatmap',
 }
 
 export default constant;
