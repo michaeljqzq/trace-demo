@@ -114,6 +114,12 @@ router.get('/', (req, res) => {
   for(let [k,v] of peoples) {
     values.push(...v.points);
   }
+  values = values.map(p => ({
+    id: p.track_id,
+    time: p.timestamp,
+    x: p.local_position.x,
+    y: p.local_position.y,
+  }));
   res.json({
     values,
     scope: {
@@ -124,10 +130,18 @@ router.get('/', (req, res) => {
     }
   });
 });
-
+init();
+  interval = setInterval(generateRandomPoint, 1000);
 router.get('/start', (req, res) => {
   init();
   interval = setInterval(generateRandomPoint, 1000);
+  res.json({
+    
+  });
+});
+
+router.get('/db', (req, res) => {
+  PUSH_TO_DB = true;
   res.json({
     
   });

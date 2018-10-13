@@ -15,7 +15,6 @@ import { withRouter } from 'react-router-dom';
 // TODO:
 
 // today:
-// data interface
 // heatmap para configure item
 // fix bug: switch route be blocked
 
@@ -81,7 +80,7 @@ class App extends Component {
   }
 
   refresh = () => {
-    fetch('/api/data').then(results => results.json()).then(data => {
+    fetch('/api/fake').then(results => results.json()).then(data => {
       
       let now = new Date();
       let pointArray = data.values;
@@ -125,11 +124,12 @@ class App extends Component {
       <form className="hidden-form" onChange={this.handleUpload} action="/api/backend/background" method="post" encType="multipart/form-data">
           <input ref={r=> {this.uploadInput = r}} type="file" name="background" />
         </form>
+      
+      <Stage ref={r => {if(r!=null) this.stageRef = r.getStage();}} style={stageStyle} width={window.innerWidth} height={window.innerHeight}>
       {
         isRouteHeatmap && 
         <Heatmap data={this.state.data} />
       }
-      <Stage ref={r => {if(r!=null) this.stageRef = r.getStage();}} style={stageStyle} width={window.innerWidth} height={window.innerHeight}>
         <Layer>
           <Rect width={20} height={20} x={0} y={0} onClick={() => {this.uploadInput.click()}}/>
         

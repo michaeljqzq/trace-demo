@@ -11,12 +11,10 @@ const BAR_HEIGHT = 30;
 const BAR_WIDTH = 10;
 const COLOR = constant.COLOR_SETTINGS;
 
-const LIMIT_MIN = 1;
-
-class TimeSelector extends React.Component {
+class GeneralSelector extends React.Component {
   state = {
     x: null,
-    limit: constant.LIMIT_INF
+    limit: null,
   }
 
   onMouseOver = () => {
@@ -28,12 +26,17 @@ class TimeSelector extends React.Component {
   }
 
   componentDidMount() {
+    let leftBound = this.props.x - TOTAL_LENGTH / 2 - BAR_WIDTH / 2;
+    let rightBound = this.props.x + TOTAL_LENGTH / 2 - BAR_WIDTH / 2;
+    let {min, max, current} = this.props;
     this.setState({
-      x: this.props.x - TOTAL_LENGTH / 2 - BAR_WIDTH / 2
+      x: (current - min) / (max - min) * (rightBound - leftBound) + leftBound,
+      limit: this.props.current,
     });
   }
 
   render() {
+    const {min, max} = this.props;
     return (
       <Group>
         <Rect 
@@ -58,7 +61,7 @@ class TimeSelector extends React.Component {
             let posx = pos.x;
             if(posx < leftBound) posx = leftBound;
             if(posx > rightBound) posx = rightBound;
-            let limit = Math.round((posx - leftBound) * (LIMIT_MIN - constant.LIMIT_INF) / (rightBound - leftBound) + constant.LIMIT_INF);
+            let limit = Math.round((posx - leftBound) * (max - min) / (rightBound - leftBound) + min);
             this.setState({
               x:posx,
               limit
@@ -69,8 +72,8 @@ class TimeSelector extends React.Component {
             }
           }}
           onDragEnd={() => {
-            if(this.props.timeChangedCallback) {
-              this.props.timeChangedCallback(this.state.limit);
+            if(this.props.valueChangedCallback) {
+              this.props.valueChangedCallback(this.state.limit);
             }
           }}
           onMouseOver={this.onMouseOver}
@@ -79,7 +82,7 @@ class TimeSelector extends React.Component {
         <Text 
           x={this.props.x + TOTAL_LENGTH / 2 - BAR_WIDTH / 2 + 20} 
           y={this.props.y - RECT_HEIGHT / 2 - 3} 
-          text={this.state.limit === constant.LIMIT_INF ? "Not limited" : `${this.state.limit} mins`}
+          text={this.state.limit}
           fontFamily='Segoe UI'
           fontSize={10}
           fill={COLOR}
@@ -90,4 +93,4 @@ class TimeSelector extends React.Component {
   }
 }
 
-export default TimeSelector;
+export default GeneralSelector;
