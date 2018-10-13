@@ -98,24 +98,34 @@ class App extends Component {
   componentDidMount() {
     this.fetchBackgroundImage();
     setInterval(this.refresh, 500);
+    
   }
 
   render() {
-    let stageStyle = {
+    let backgroundStyle = {
       backgroundImage: `url(${this.state.background})`,
       backgroundRepeat: `no-repeat`,
       backgroundSize: `cover`,
+    }
+    let stageStyle = {
+      position: 'fixed'
       // opacity: 0.9,
     }
-    return (<div>
+    return (<div className='app' id='app' style={backgroundStyle}>
       <form className="hidden-form" onChange={this.handleUpload} action="/api/backend/background" method="post" encType="multipart/form-data">
           <input ref={r=> {this.uploadInput = r}} type="file" name="background" />
         </form>
-      <Stage ref={r => {if(r!=null) this.stageRef = r.getStage()}} style={stageStyle} width={window.innerWidth} height={window.innerHeight}>
+      {
+        this.props.children.type === Heatmap && 
+        React.Children.map(this.props.children, child => React.cloneElement(child, { 
+          data: this.state.data,
+        }))
+      }
+      <Stage ref={r => {if(r!=null) this.stageRef = r.getStage();}} style={stageStyle} width={window.innerWidth} height={window.innerHeight}>
         <Layer>
           <Rect width={20} height={20} x={0} y={0} onClick={() => {this.uploadInput.click()}}/>
         </Layer>
-        {React.Children.map(this.props.children, child => React.cloneElement(child, { 
+        {this.props.children.type === Dashboard && React.Children.map(this.props.children, child => React.cloneElement(child, { 
           data: this.state.data,
         }))}
                 
