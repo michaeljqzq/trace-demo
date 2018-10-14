@@ -14,12 +14,17 @@ const documentDefinition = { id: 'hello world doc', content: 'Hello World!' };
 let database = null;
 let container = null;
  
-async function query() {
+async function query(start, end) {
   if(!database) {database = (await client.databases.createIfNotExists(databaseDefinition)).database; console.log('init db')}
  
   if(!container) container = (await database.containers.createIfNotExists(collectionDefinition)).container;
+
+  let condition = '';
+  if(start != undefined && end != undefined) {
+    condition = `WHERE c.timestamp >= ${start} and c.timestamp <=${end}`;
+  }
  
-  return await container.items.query('SELECT * FROM c order by c.timestamp').toArray();
+  return await container.items.query(`SELECT * FROM c ${condition} order by c.timestamp`).toArray();
 }
 
 // async function run() {
@@ -39,7 +44,8 @@ async function query() {
 // }
 
 router.get('/', async (req, res) => {
-  let {result : values} = await query();
+  let {result : values} = await query(req.query.start, req.query.end);
+  
   values = values.map(p => ({
     id: p.track_id,
     time: p.timestamp,

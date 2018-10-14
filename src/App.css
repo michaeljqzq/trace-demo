@@ -9,3 +9,7 @@
   width: 100%;
   height: 100%;
 }
+
+.react-datepicker__time-list {
+  padding-inline-start: 0;
+}
