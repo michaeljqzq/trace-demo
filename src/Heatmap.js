@@ -52,7 +52,7 @@ class Heatmap extends React.Component {
       width: window.innerWidth,
       height: window.innerHeight,
       container: document.getElementById('app'),
-      backgroundColor: constant.COLOR_HEATMAP_BACKGROUND,
+      // backgroundColor: constant.COLOR_HEATMAP_BACKGROUND,
     });
   }
 

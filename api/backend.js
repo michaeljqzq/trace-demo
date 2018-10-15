@@ -11,6 +11,9 @@ router.get('/background', (req, res) => {
 
 router.post('/background', upload.single('file'), (req, res) => {
   try {
+    if(!fs.existsSync(path.resolve(__dirname, 'upload'))) {
+      fs.mkdirSync(path.resolve(__dirname, 'upload'));
+    }
     fs.writeFileSync(path.resolve(__dirname, 'upload/background-image'), req.file.buffer);
   }catch(e) {
     res.status(500).send(JSON.stringify(e));

@@ -36,7 +36,7 @@ class Dashboard extends Component {
   }
 
   onHoverElement = (id) => {
-    // console.log(id);
+    console.log(id);
     if(this.config.hoverOutDelayTimeout) {
       clearTimeout(this.config.hoverOutDelayTimeout);
       this.config.hoverOutDelayTimeout = null;
@@ -260,7 +260,7 @@ class Dashboard extends Component {
       }
     }
     elementStack.sort((a,b) => a.priority - b.priority);
-    console.log(`Number of elements to render: ${elementStack.length}`)
+    console.log(`Number of elements to render: ${elementStack.length}, paths: ${pointMap.size}`)
     return (
       <Layer>
       {elementStack.map(e=>e.element)}

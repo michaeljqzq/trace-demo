@@ -28,7 +28,7 @@ class App extends Component {
     timeLimit: null,
     data: new Map(),
     showSettings: false,
-    startDate: moment().add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
+    startDate: moment().hour(16).minute(45).second(0).millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
     logFactor: 10,
   }
 
@@ -138,11 +138,7 @@ class App extends Component {
   }
 
   render() {
-    let backgroundStyle = {
-      backgroundImage: `url(${this.state.background})`,
-      backgroundRepeat: `no-repeat`,
-      backgroundSize: `cover`,
-    }
+    
     let stageStyle = {
       position: 'fixed'
       // opacity: 0.9,
@@ -155,6 +151,14 @@ class App extends Component {
     }
     let isRouteHeatmap = false;
     if(this.props.location.pathname.includes(constant.ROUTER_PATH_HEATMAP)) isRouteHeatmap = true;
+    let backgroundStyle = {
+      backgroundImage: `url(${this.state.background})`,
+      backgroundRepeat: `no-repeat`,
+      backgroundSize: `cover`,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        opacity: isRouteHeatmap ? 0.5 : 1,
+    }
     return (<div className='app' id='app' style={backgroundStyle}>
       <form className="hidden-form" onChange={this.handleUpload} action="/api/backend/background" method="post" encType="multipart/form-data">
           <input ref={r=> {this.uploadInput = r}} type="file" name="background" />
