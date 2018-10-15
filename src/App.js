@@ -181,6 +181,12 @@ class App extends Component {
         isRouteHeatmap && 
         <Heatmap data={this.state.data} logFactor={this.state.logFactor}/>
       }
+        
+        {
+          !isRouteHeatmap && 
+          <Dashboard data={this.state.data} />
+        }
+
         <Layer>
           <Rect width={20} height={20} x={0} y={0} onClick={() => {this.uploadInput.click()}}/>
         
@@ -199,10 +205,6 @@ class App extends Component {
             onClick={() => {this.uploadInput.click()}}
           />
         </Layer>
-        {
-          !isRouteHeatmap && 
-          <Dashboard data={this.state.data} />
-        }
                 
         <Layer>
           {/* <TimeSelector
