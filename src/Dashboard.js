@@ -39,6 +39,7 @@ class Dashboard extends Component {
   }
 
   onHoverElement = (id) => {
+    console.log(id);
     if(this.config.hoverOutDelayTimeout) {
       clearTimeout(this.config.hoverOutDelayTimeout);
       this.config.hoverOutDelayTimeout = null;

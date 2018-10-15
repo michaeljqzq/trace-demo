@@ -13,6 +13,13 @@ const documentDefinition = { id: 'hello world doc', content: 'Hello World!' };
 
 let database = null;
 let container = null;
+let cache = {
+  start: null,
+  end: null,
+  lastTimestamp: null,
+  data: []
+}
+let requestInProgress = false;
  
 async function query(start, end) {
   if(!database) {database = (await client.databases.createIfNotExists(databaseDefinition)).database; console.log('init db')}
@@ -23,8 +30,48 @@ async function query(start, end) {
   if(start != undefined && end != undefined) {
     condition = `WHERE c.timestamp >= ${start} and c.timestamp <=${end}`;
   }
+
+  console.log(`query: SELECT * FROM c ${condition} order by c.timestamp`);
  
   return await container.items.query(`SELECT * FROM c ${condition} order by c.timestamp`).toArray();
+  // let r =  await container.items.query(`SELECT * FROM c `).toArray();
+  // console.log(JSON.stringify(r));
+  // return [];
+}
+
+function withCache(queryFunc) {
+  return async function(start, end) {
+    try {
+      let os = start, oe = end;
+      if (cache.start === start && cache.end === end) {
+        start = cache.lastTimestamp;
+      } else {
+        cache = {
+          start: start,
+          end: end,
+          lastTimestamp: null,
+          data: []
+        }
+      }
+      if (requestInProgress) {
+        return {result: []};
+      }
+      requestInProgress = true;
+      let queryResult = await queryFunc(start, end);
+      requestInProgress = false;
+      let lastTimestamp = new Date(-8640000000000000);
+      for (let point of queryResult.result) {
+        if (point.timestamp > lastTimestamp) lastTimestamp = point.timestamp;
+      }
+      cache.lastTimestamp = lastTimestamp;
+      cache.data.push(...queryResult.result);
+      return {result: cache.data};
+    } catch (e) {
+      requestInProgress = false;
+      console.log(`Error: ${JSON.stringify(e)}`);
+      return {result: []};
+    }
+  }
 }
 
 // async function run() {
@@ -43,8 +90,29 @@ async function query(start, end) {
 //   });
 // }
 
+async function queryData(start, end) {
+  try{ 
+    let now = new Date();
+    let result = await withCache(query)(start, end);
+    console.log(`Take ${(new Date() - now)/1000}`)
+  }
+  catch(e) {
+    console.log(`Error: ${JSON.stringify(e)}`);
+  }
+}
+
+async function stressTest() {
+  let now = new Date();
+  setInterval(async () => {
+    queryData(now - 1000 * 86400, +now);
+  },1000);
+  // queryData(now - 1000 * 86400, +now);
+}
+
+// stressTest();
+
 router.get('/', async (req, res) => {
-  let {result : values} = await query(req.query.start, req.query.end);
+  let {result : values} = await withCache(query)(parseInt(req.query.start), parseInt(req.query.end));
   
   values = values.map(p => ({
     id: p.track_id,

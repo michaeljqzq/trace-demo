@@ -43,8 +43,8 @@ const constant = {
   ROUTER_SELECTOR_HEIGHT: 28,
   ROUTER_PATH_TRACE: 'trace',
   ROUTER_PATH_HEATMAP: 'heatmap',
-  CAMERA_LIMIT_X: 1000,
-  CAMERA_LIMIT_Y: 600,
+  CAMERA_LIMIT_X: 1920,
+  CAMERA_LIMIT_Y: 1080,
   FONT_FAMILY: 'Helvetica Neue',
 
   DB_HOST: "https://techsummitdemo.documents.azure.com:443/",

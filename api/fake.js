@@ -100,7 +100,6 @@ async function generateRandomPoint() {
       deltaY,
     }
     v.points.push(data);
-    console.log(data.track_id)
     if(PUSH_TO_DB) {
       await insertData(data);
     }
