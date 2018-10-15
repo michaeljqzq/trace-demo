@@ -148,8 +148,8 @@ class Dashboard extends Component {
         priority: v.points.length === 0 ? 0 : v.points[0].time + offset,
         element: <Line stroke={longestPathStrokeColor}
           strokeWidth={constant.PATH_STROKE_WIDTH}
-          lineJoin="round"
-          lineCap="round"
+          // lineJoin="round"
+          // lineCap="round"
           tension={0.5}
           points={v.points.reduce((acc,cur)=>{acc.push(cur.x,cur.y);return acc;}, [])}
           onMouseEnter={hoverFunction}
@@ -213,6 +213,7 @@ class Dashboard extends Component {
           let point = lessThan20Points[i];
           if(point.time === v.points[0].time) continue;
           let isSpanDot = new Date(point.time).getSeconds() % constant.DOT_SPAN === 0;
+          
           elementStack.push({
             priority: point.time + offset + 5,
             element: <Dot x={point.x}
@@ -259,6 +260,7 @@ class Dashboard extends Component {
       }
     }
     elementStack.sort((a,b) => a.priority - b.priority);
+    console.log(`Number of elements to render: ${elementStack.length}`)
     return (
       <Layer>
       {elementStack.map(e=>e.element)}

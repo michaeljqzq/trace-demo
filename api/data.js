@@ -4,6 +4,7 @@ const uuid = require('uuid/v4');
 const cosmos = require('@azure/cosmos');
 const CosmosClient = cosmos.CosmosClient;
 const constant = require('../src/constant');
+var memoryCache = require('memory-cache');
  
 const client = new CosmosClient({ endpoint: constant.DB_HOST, auth: { masterKey: constant.DB_KEY } });
  
@@ -19,7 +20,6 @@ let cache = {
   lastTimestamp: null,
   data: []
 }
-let requestInProgress = false;
  
 async function query(start, end) {
   if(!database) {database = (await client.databases.createIfNotExists(databaseDefinition)).database; console.log('init db')}
@@ -45,30 +45,43 @@ function withCache(queryFunc) {
       let os = start, oe = end;
       if (cache.start === start && cache.end === end) {
         start = cache.lastTimestamp;
+        console.log('cache hit');
       } else {
         cache = {
-          start: start,
-          end: end,
+          start: null,
+          end: null,
           lastTimestamp: null,
           data: []
         }
+        console.log('cache miss')
       }
-      if (requestInProgress) {
+      console.log(memoryCache.get('requestInProgress'))
+      if (memoryCache.get('requestInProgress')) {
+        console.log(`There's a request in progress, skip`);
         return {result: []};
       }
-      requestInProgress = true;
+      memoryCache.put('requestInProgress', true);
+      console.log('set flag to true')
       let queryResult = await queryFunc(start, end);
-      requestInProgress = false;
-      let lastTimestamp = new Date(-8640000000000000);
+      memoryCache.put('requestInProgress', false);
+      console.log('set flag to false, query result is', JSON.stringify(queryResult))
+      let lastTimestamp = -8640000000000000;
       for (let point of queryResult.result) {
-        if (point.timestamp > lastTimestamp) lastTimestamp = point.timestamp;
+        let t = parseInt(point.timestamp);
+        if (t > lastTimestamp) lastTimestamp = t;
       }
-      cache.lastTimestamp = lastTimestamp;
-      cache.data.push(...queryResult.result);
+      if(queryResult.result.length !== 0) {
+        cache.start = os;
+        cache.end = end;
+        cache.lastTimestamp = lastTimestamp;
+        cache.data.push(...queryResult.result);
+        console.log('cache updated');
+      }
+      
       return {result: cache.data};
     } catch (e) {
-      requestInProgress = false;
-      console.log(`Error: ${JSON.stringify(e)}`);
+      memoryCache.put('requestInProgress', false);
+      console.log(`Error: ${(e)}`);
       return {result: []};
     }
   }
@@ -90,29 +103,31 @@ function withCache(queryFunc) {
 //   });
 // }
 
-async function queryData(start, end) {
-  try{ 
-    let now = new Date();
-    let result = await withCache(query)(start, end);
-    console.log(`Take ${(new Date() - now)/1000}`)
-  }
-  catch(e) {
-    console.log(`Error: ${JSON.stringify(e)}`);
-  }
-}
+// async function queryData(start, end) {
+//   try{ 
+//     let now = new Date();
+//     let result = await withCache(query)(start, end);
+//     console.log(`Take ${(new Date() - now)/1000}`)
+//   }
+//   catch(e) {
+//     console.log(`Error: ${JSON.stringify(e)}`);
+//   }
+// }
 
-async function stressTest() {
-  let now = new Date();
-  setInterval(async () => {
-    queryData(now - 1000 * 86400, +now);
-  },1000);
-  // queryData(now - 1000 * 86400, +now);
-}
+// async function stressTest() {
+//   let now = new Date();
+//   setInterval(async () => {
+//     queryData(now - 1000 * 86400, +now);
+//   },1000);
+//   // queryData(now - 1000 * 86400, +now);
+// }
 
 // stressTest();
 
+const q = withCache(query);
+
 router.get('/', async (req, res) => {
-  let {result : values} = await withCache(query)(parseInt(req.query.start), parseInt(req.query.end));
+  let {result : values} = await q(parseInt(req.query.start), parseInt(req.query.end));
   
   values = values.map(p => ({
     id: p.track_id,

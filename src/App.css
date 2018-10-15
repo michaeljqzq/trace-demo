@@ -12,4 +12,5 @@
 
 .react-datepicker__time-list {
   padding-inline-start: 0;
+  padding-left: 0;
 }

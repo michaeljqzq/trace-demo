@@ -15,8 +15,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 // TODO:
 
 // today:
-// fix bug: switch route be blocked
-// fix: hover on inactive path should have highest priority
+// start point is 10 minutes ago, choose time minute span : 1
+
 
 // 0.2s to draw the trace
 // shadow of real-time track
@@ -28,7 +28,7 @@ class App extends Component {
     timeLimit: null,
     data: new Map(),
     showSettings: false,
-    startDate: moment().hour(0).minute(0).second(0).millisecond(0),
+    startDate: moment().add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
     logFactor: 10,
   }
 
@@ -83,7 +83,7 @@ class App extends Component {
   }
 
   refresh = () => {
-    fetch(`/api/data?start=${this.state.startDate.valueOf()}&end=${this.state.startDate.clone().hour(23).minute(59).second(59).millisecond(999).valueOf()}`).then(results => results.json()).then(data => {
+    fetch(`/api/${constant.USE_FAKE_DATA ? 'fake': 'data'}?start=${this.state.startDate.valueOf()}&end=${this.state.startDate.clone().hour(23).minute(59).second(59).millisecond(999).valueOf()}&disableCache=${+new Date()}`).then(results => results.json()).then(data => {
       
       let now = new Date();
       let pointArray = data.values;
