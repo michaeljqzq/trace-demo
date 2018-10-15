@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { Stage, Layer, Group, Circle, Line, Rect, Arc, Path } from 'react-konva';
-import Konva from 'konva';
+import { Stage, Layer, Rect, Path } from 'react-konva';
 import BackgroundImage from './asset/bg.jpg';
 import constant from './constant';
-import util from './util';
 import Dashboard from './Dashboard';
 import Heatmap from './Heatmap';
-import TimeSelector from './TimeSelector';
 import RouterSelector from './RouterSelector';
 import { withRouter } from 'react-router-dom';
 import GeneralSelector from './GeneralSelector';

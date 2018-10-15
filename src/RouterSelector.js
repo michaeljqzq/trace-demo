@@ -1,8 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
-import { Circle, Group, Rect, Text, Layer } from 'react-konva';
-import Konva from 'konva';
-import Label from './Label';
+import { Group, Rect, Text } from 'react-konva';
 import constant from './constant';
 import { withRouter } from 'react-router-dom';
 

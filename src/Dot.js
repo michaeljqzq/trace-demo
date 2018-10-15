@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
 import { Circle, Group } from 'react-konva';
-import Konva from 'konva';
 import Label from './Label';
 import constant from './constant';
 

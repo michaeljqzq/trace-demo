@@ -1,8 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
-import { Circle, Group, Rect, Text } from 'react-konva';
-import Konva from 'konva';
-import Label from './Label';
+import { Group, Rect, Text } from 'react-konva';
 import constant from './constant';
 
 const TOTAL_LENGTH = 100;

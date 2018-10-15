@@ -1,16 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
-import { Rect, Group, Image as KonvaImage, Layer, Path } from 'react-konva';
-import Konva from 'konva';
-import Label from './Label';
+import { Layer } from 'react-konva';
 import constant from './constant';
 
 
 class Heatmap extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
+  
   componentWillReceiveProps(nextProps) {
     // You don't have to do this check first, but it can help prevent an unneeded render
     if (nextProps.data !== this.props.data) {

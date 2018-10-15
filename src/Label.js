@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
 import { Rect, Text, Group } from 'react-konva';
-import Konva from 'konva';
 import constant from './constant';
 
 class Label extends React.Component {

@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './Dashboard.css';
-import { Stage, Layer, Group, Circle, Line, Rect, Arc } from 'react-konva';
-import Konva from 'konva';
+import { Layer, Group, Line, Arc } from 'react-konva';
 import Dot from './Dot';
-import TimeSelector from './TimeSelector';
 import constant from './constant';
 import util from './util';
 
@@ -27,7 +24,7 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    
+    console.log('Dashboard component mounted');
   }
 
   getApiDomain() {
@@ -39,7 +36,7 @@ class Dashboard extends Component {
   }
 
   onHoverElement = (id) => {
-    console.log(id);
+    // console.log(id);
     if(this.config.hoverOutDelayTimeout) {
       clearTimeout(this.config.hoverOutDelayTimeout);
       this.config.hoverOutDelayTimeout = null;
