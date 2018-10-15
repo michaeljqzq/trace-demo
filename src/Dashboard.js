@@ -116,7 +116,13 @@ class Dashboard extends Component {
       let offset = v.active ? 86400000 : 0;
       let hoverFunction = this.onHoverElement.bind(null, k);
       let displayMode = constant.DISPLAY_NONE;
-      if(this.state.hoverElement != null && this.state.hoverElement !== k) {
+      if(this.state.hoverElement == null) {
+        if(v.active) {
+          displayMode = constant.DISPLAY_ACTIVE;
+        }else {
+          displayMode = constant.DISPLAY_INACTIVE;
+        }
+      }else if(this.state.hoverElement !== k) {
         displayMode = constant.DISPLAY_INACTIVE;
       }else {
         if(v.active) {
