@@ -130,6 +130,7 @@ class Dashboard extends Component {
         }else {
           displayMode = constant.DISPLAY_INACTIVE_HOVER;
         }
+        offset = 86400000;
       }
 
       let longestPathStrokeColor;
