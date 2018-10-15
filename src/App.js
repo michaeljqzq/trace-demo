@@ -32,7 +32,7 @@ class App extends Component {
     timeLimit: null,
     data: new Map(),
     showSettings: false,
-    startDate: moment().hour(0).minute(0),
+    startDate: moment().hour(0).minute(0).second(0).millisecond(0),
     logFactor: 10,
   }
 
@@ -87,13 +87,15 @@ class App extends Component {
   }
 
   refresh = () => {
-    fetch(`/api/data?start=${this.state.startDate.valueOf()}&end=${this.state.startDate.clone().hour(23).minute(59).second(59).valueOf()}`).then(results => results.json()).then(data => {
+    fetch(`/api/data?start=${this.state.startDate.valueOf()}&end=${this.state.startDate.clone().hour(23).minute(59).second(59).millisecond(999).valueOf()}`).then(results => results.json()).then(data => {
       
       let now = new Date();
       let pointArray = data.values;
       if(this.state.timeLimit != null) {
         pointArray = pointArray.filter(p => now - p.time < this.state.timeLimit * 60 * 1000);
       }
+      // Filter invalid data
+      pointArray = pointArray.filter(p => p.x >= 0 && p.y >= 0 && p.x <= data.scope.maxX && p.y <= data.scope.maxY);
       // Convert cordinate
       pointArray = pointArray.map(point => {
         point.x = this.getX(point.x, data.scope.maxX);
