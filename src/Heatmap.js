@@ -9,17 +9,17 @@ import constant from './constant';
 class Heatmap extends React.Component {
   constructor(props) {
     super(props);
-    this.rows = Math.floor((window.innerWidth - 1) / constant.HEAT_MAP_PIXEL_SCALE) + 1;
-    this.columns = Math.floor((window.innerHeight - 1) / constant.HEAT_MAP_PIXEL_SCALE) + 1;
   }
 
   componentWillReceiveProps(nextProps) {
     // You don't have to do this check first, but it can help prevent an unneeded render
     if (nextProps.data !== this.props.data) {
       const SCALE = constant.HEAT_MAP_PIXEL_SCALE;
-      let heatMap = new Array(this.rows);
-      for(let i=0;i<this.rows;i++) {
-        heatMap[i] = new Array(this.columns).fill(0);
+      let rows = Math.floor((window.innerWidth) / constant.HEAT_MAP_PIXEL_SCALE) + 1;
+      let columns = Math.floor((window.innerHeight) / constant.HEAT_MAP_PIXEL_SCALE) + 1;
+      let heatMap = new Array(rows);
+      for(let i=0;i<rows;i++) {
+        heatMap[i] = new Array(columns).fill(0);
       }
       for(let point of nextProps.data) {
         heatMap[Math.floor(point.x / SCALE)][Math.floor(point.y / SCALE)]++;
