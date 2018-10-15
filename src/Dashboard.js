@@ -222,7 +222,7 @@ class Dashboard extends Component {
               labelColor={constant.COLOR_ACTIVE_SCHEMA[v.colorSchema].COLOR_TIME_LABEL} 
               onMouseEnter={hoverFunction}
               onMouseLeave={this.onLeaveElement}
-              key={k+"d2"+point.time}
+              key={k+"d2"+point.uuid}
             />
           });
         }

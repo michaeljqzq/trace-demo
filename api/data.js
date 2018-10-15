@@ -116,6 +116,7 @@ router.get('/', async (req, res) => {
   
   values = values.map(p => ({
     id: p.track_id,
+    uuid: p.id,
     time: p.timestamp,
     x: p.local_position.x,
     y: p.local_position.y,
