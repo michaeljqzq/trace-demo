@@ -8,9 +8,9 @@ import Heatmap from './Heatmap';
 import RouterSelector from './RouterSelector';
 import { withRouter } from 'react-router-dom';
 import GeneralSelector from './GeneralSelector';
-import DatePicker from 'react-datepicker';
+import DateTime from 'react-datetime';
 import moment from 'moment';
-import 'react-datepicker/dist/react-datepicker.css';
+import 'react-datetime/css/react-datetime.css';
 
 // TODO:
 
@@ -112,13 +112,6 @@ class App extends Component {
     console.log('App component mounted');
     this.fetchBackgroundImage();
     setInterval(this.refresh, 1000 * constant.WEB_REFRESH_INTERVAL);
-    this.datePickerRef.input.addEventListener('keydown', (event) => {
-      const keyName = event.key;
-      if(keyName === 'Enter') {
-        console.log('raw: enter hit')
-        this.handleChange(this.tempDatePickerValueForKeyboard);
-      }
-    });
   }
 
   onMouseOver = () => {
@@ -142,7 +135,7 @@ class App extends Component {
   }
 
   handleChange = (date) => {
-    alert(date)
+    console.log(`date onchange called with ${date}`)
     if(date > moment()) {
       alert('selected date is later than now');
       return;
@@ -150,11 +143,6 @@ class App extends Component {
     this.setState({
       startDate: date
     });
-  }
-
-  onChangeRaw=(date) => {
-    console.log(`onchangeraw called with ${moment(date.target.value)}`)
-    this.tempDatePickerValueForKeyboard = moment(date.target.value);
   }
 
   render() {
@@ -184,17 +172,12 @@ class App extends Component {
         </form>
         {
           this.state.showSettings && <div className="date-picker" style={datePickerStyle} >
-          <DatePicker
-              selected={this.state.startDate}
-              onChange={this.handleChange}
-              onChangeRaw={this.onChangeRaw}
-              ref={r=>{this.datePickerRef = r;}}
-              dateFormat="MM/DD HH:mm"
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              // withPortal
-          /></div>
+          <DateTime 
+            defaultValue={this.state.startDate}
+            timeFormat='HH:mm'
+            onBlur={this.handleChange}
+          />
+          </div>
         }
       
       <Stage ref={r => {if(r!=null) this.stageRef = r.getStage();}} style={stageStyle} width={window.innerWidth} height={window.innerHeight}>
