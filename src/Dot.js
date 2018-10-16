@@ -17,7 +17,7 @@ class Dot extends React.Component {
           strokeWidth={constant.DOT_STROKE_WIDTH}
           onMouseEnter={this.props.onMouseEnter}
           onMouseLeave={this.props.onMouseLeave}
-          key={"circle-"+this.props.key}
+          // key={"circle-"+this.props.key}
         />
         {
           this.props.label && <Label x={this.props.x} 
@@ -26,7 +26,7 @@ class Dot extends React.Component {
             labelText={this.props.label}
             onMouseEnter={this.props.onMouseEnter}
             onMouseLeave={this.props.onMouseLeave}
-            key={"label-"+this.props.key}
+            // key={"label-"+this.props.key}
             />
         }
       </Group>
