@@ -75,7 +75,10 @@ class Dashboard extends Component {
       let now = Date.now();
      
       v.active = (now - v.points[v.points.length - 1].time < constant.ACTIVE_TIME_SPAN * 1000);
-
+      if(!v.active && !this.props.showInactivePath) {
+        pointMap.delete(k);
+        continue; 
+      }
       if(v.active && cMap.has(k)) {
         colorUsedTimes[cMap.get(k)]++;
         v.colorSchema = cMap.get(k);
