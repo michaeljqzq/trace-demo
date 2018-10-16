@@ -40,7 +40,8 @@ class Label extends React.Component {
           fill={this.props.labelColor}
           cornerRadius={20}
           onMouseEnter={this.props.onMouseEnter}
-          onMouseLeave={this.props.onMouseLeave} 
+          onMouseLeave={this.props.onMouseLeave}
+          key={"label1-"+this.props.key}
           />
         <Text x={this.state.rectX + constant.LABEL_TEXT_LR_PADDING} y={this.state.rectY} ref={ r => {this.textRef = r;}} text={this.props.labelText}
           fontFamily={constant.FONT_FAMILY}
@@ -50,11 +51,14 @@ class Label extends React.Component {
           align='center' 
           onMouseEnter={this.props.onMouseEnter}
           onMouseLeave={this.props.onMouseLeave} 
+          key={"label2-"+this.props.key}
           />
         <Rect x={this.props.x - constant.LABEL_PIN_WIDTH / 2} y={this.props.y - constant.LABEL_PIN_HEIGHT} 
           width={constant.LABEL_PIN_WIDTH} 
           height={constant.LABEL_PIN_HEIGHT} 
-          fill='white' />
+          fill='white'
+          key={"label3-"+this.props.key}
+           />
       </Group>
     );
   }

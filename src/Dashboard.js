@@ -207,7 +207,7 @@ class Dashboard extends Component {
             white={true}
             onMouseEnter={hoverFunction}
             onMouseLeave={this.onLeaveElement}
-            key={"d1"+k}
+            key={"d1-"+k}
           />
         });
 
@@ -225,14 +225,14 @@ class Dashboard extends Component {
               labelColor={constant.COLOR_ACTIVE_SCHEMA[v.colorSchema].COLOR_TIME_LABEL} 
               onMouseEnter={hoverFunction}
               onMouseLeave={this.onLeaveElement}
-              key={"d2"+point.uuid}
+              key={"d2-"+k+"-"+point.uuid}
             />
           });
         }
         let nowPoint = lessThan20Points[lessThan20Points.length - 1];
         elementStack.push({
           priority: nowPoint.time + offset + 4,
-          element: <Group key={k+'glowgroup'}>
+          element: <Group key={"glow-"+k}>
                     <Arc x={nowPoint.x}
                       y={nowPoint.y} 
                       innerRadius={constant.DOT_RADIUS}
@@ -240,6 +240,7 @@ class Dashboard extends Component {
                       angle={360}
                       fill='rgb(134,70,13)'
                       opacity={0.7}
+                      key={"glow1-"+k}
                     />
                     <Arc x={nowPoint.x}
                       y={nowPoint.y} 
@@ -248,6 +249,7 @@ class Dashboard extends Component {
                       angle={360}
                       fill='rgb(82,49,20)'
                       opacity={0.5}
+                      key={"glow2-"+k}
                     />
                     <Arc x={nowPoint.x}
                       y={nowPoint.y} 
@@ -256,6 +258,7 @@ class Dashboard extends Component {
                       angle={360}
                       fill='rgb(39,32,26)'
                       opacity={0.3}
+                      key={"glow3-"+k}
                     />
                     </Group>
         })
