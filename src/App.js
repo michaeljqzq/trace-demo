@@ -26,7 +26,7 @@ class App extends Component {
     background: BackgroundImage,
     timeLimit: null,
     data: new Map(),
-    showSettings: false,
+    showSettings: true,
     showInactivePath: true,
     startDate: moment().hour(17).minute(0).second(0).millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
     logFactor: 10,
@@ -112,6 +112,13 @@ class App extends Component {
     console.log('App component mounted');
     this.fetchBackgroundImage();
     setInterval(this.refresh, 1000 * constant.WEB_REFRESH_INTERVAL);
+    this.datePickerRef.input.addEventListener('keydown', (event) => {
+      const keyName = event.key;
+      if(keyName === 'Enter') {
+        console.log('raw: enter hit')
+        this.handleChange(this.tempDatePickerValueForKeyboard);
+      }
+    });
   }
 
   onMouseOver = () => {
@@ -135,6 +142,7 @@ class App extends Component {
   }
 
   handleChange = (date) => {
+    alert(date)
     if(date > moment()) {
       alert('selected date is later than now');
       return;
@@ -144,8 +152,12 @@ class App extends Component {
     });
   }
 
+  onChangeRaw=(date) => {
+    console.log(`onchangeraw called with ${moment(date.target.value)}`)
+    this.tempDatePickerValueForKeyboard = moment(date.target.value);
+  }
+
   render() {
-    
     let stageStyle = {
       position: 'fixed'
       // opacity: 0.9,
@@ -175,11 +187,13 @@ class App extends Component {
           <DatePicker
               selected={this.state.startDate}
               onChange={this.handleChange}
+              onChangeRaw={this.onChangeRaw}
+              ref={r=>{this.datePickerRef = r;}}
+              dateFormat="MM/DD HH:mm"
               showTimeSelect
               timeFormat="HH:mm"
               timeIntervals={15}
-              dateFormat="LLL"
-              timeCaption="time"
+              // withPortal
           /></div>
         }
       
