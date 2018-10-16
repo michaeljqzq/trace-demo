@@ -54,11 +54,14 @@ class Dashboard extends Component {
       this.setState({
         hoverElement: null
       });
-    },100);
+    },300);
   }
 
   handlePoints = (pointArray) => {
+    let p1 = performance.now();
     let pointMap = new Map();
+    let colorUsedTimes = constant.COLOR_ACTIVE_SCHEMA.map(x=>0);
+    let cMap = this.cache.activeColorMap;
     for(let point of pointArray) {
       if(!pointMap.has(point.id)) {
         pointMap.set(point.id, {
@@ -70,30 +73,16 @@ class Dashboard extends Component {
     for(let [k,v] of pointMap) {
       let active = false;
       let now = Date.now();
-      for(let point of v.points) {
-        if(now - point.time < constant.ACTIVE_TIME_SPAN * 1000) {
-          active = true;
-          break;
-        }
-      }
-      v.active = active;
-    }
-    return pointMap;
-  }
+     
+      v.active = (now - v.points[v.points.length - 1].time < constant.ACTIVE_TIME_SPAN * 1000);
 
-  render() {
-    // Set colors
-    let colorUsedTimes = constant.COLOR_ACTIVE_SCHEMA.map(x=>0);
-    let cMap = this.cache.activeColorMap;
-    let pointMap = this.handlePoints(this.props.data);
-    for(let [k,v] of pointMap) {
-      if(cMap.has(k)) {
+      if(v.active && cMap.has(k)) {
         colorUsedTimes[cMap.get(k)]++;
         v.colorSchema = cMap.get(k);
       }
     }
     for(let [k,v] of pointMap) {
-      if(!cMap.has(k)) {
+      if(v.active && !cMap.has(k)) {
         let minTimes = colorUsedTimes[0];
         let minIndex = 0;
         for(let i=1;i<colorUsedTimes.length;i++) {
@@ -107,6 +96,15 @@ class Dashboard extends Component {
         v.colorSchema = minIndex;
       }
     }
+    console.log(`Handle points use ${performance.now() - p1} ms`);
+    return pointMap;
+  }
+
+  render() {
+    // Set colors
+    
+    let pointMap = this.handlePoints(this.props.data);
+    let now = new Date();
 
     let elementStack = [];
     for(let [k,v] of pointMap) {
@@ -129,6 +127,8 @@ class Dashboard extends Component {
         }
         offset = 86400000;
       }
+
+      if(displayMode === constant.DISPLAY_ACTIVE) console.log(`Active path: ${k}`);
 
       let longestPathStrokeColor;
       switch(displayMode) {
@@ -158,7 +158,8 @@ class Dashboard extends Component {
         />
       });
 
-      let lessThan40Points = v.points.filter(p => (Date.now() - p.time) <= 40 * 1000);
+      
+      let lessThan40Points = v.points.filter(p => (now - p.time) <= 40 * 1000);
       if(displayMode === constant.DISPLAY_ACTIVE) {
         elementStack.push({
           priority: lessThan40Points.length === 0 ? 0 : lessThan40Points[0].time + offset + 1,
@@ -175,7 +176,7 @@ class Dashboard extends Component {
         });
       }
 
-      let lessThan20Points = lessThan40Points.filter(p => (Date.now() - p.time) <= 20 * 1000);
+      let lessThan20Points = lessThan40Points.filter(p => (now - p.time) <= 20 * 1000);
       if(displayMode === constant.DISPLAY_ACTIVE) {
         elementStack.push({
           priority: lessThan20Points.length === 0 ? 0 : lessThan20Points[0].time + offset + 2,
@@ -206,9 +207,7 @@ class Dashboard extends Component {
             key={k+"d1"}
           />
         });
-      }
 
-      if(displayMode === constant.DISPLAY_ACTIVE) {
         for(let i=0;i<lessThan20Points.length;i++) {
           let point = lessThan20Points[i];
           if(point.time === v.points[0].time) continue;
@@ -260,7 +259,7 @@ class Dashboard extends Component {
       }
     }
     elementStack.sort((a,b) => a.priority - b.priority);
-    console.log(`Number of elements to render: ${elementStack.length}, paths: ${pointMap.size}`)
+    console.log(`\nNumber of elements to render: ${elementStack.length}, paths: ${pointMap.size}`)
     return (
       <Layer>
       {elementStack.map(e=>e.element)}

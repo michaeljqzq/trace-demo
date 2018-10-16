@@ -16,19 +16,18 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 // today:
 // start point is 10 minutes ago, choose time minute span : 1
+// cache for multiple data
+// check cosmos db speed using sdk
+// fix point still show when inactive
+// add option to hide inactive path
 
-
-// 0.2s to draw the trace
-// shadow of real-time track
-// split the line less than 40 seconds
-// time selector hide in default
 class App extends Component {
   state = {
     background: BackgroundImage,
     timeLimit: null,
     data: new Map(),
     showSettings: false,
-    startDate: moment().hour(16).minute(45).second(0).millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
+    startDate: moment().add(-1,'day').hour(19).minute(45).second(0).millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
     logFactor: 10,
   }
 
