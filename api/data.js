@@ -12,18 +12,24 @@ const databaseDefinition = { id: constant.DB_DATABASE_ID };
 const collectionDefinition = { id: constant.DB_COLLECTION_ID };
 const documentDefinition = { id: 'hello world doc', content: 'Hello World!' };
 
+const CACHE_KEY_DATA_CACHE = "dataCache";
+
 let database = null;
 let container = null;
-let cache = {
-  start: null,
-  end: null,
-  lastTimestamp: null,
-  data: []
-}
+let cache = {};
+let initialized = false;
+// {
+//   start: null,
+//   end: null,
+//   lastTimestamp: null,
+//   data: []
+// }
 
 async function init() {
   database = (await client.databases.createIfNotExists(databaseDefinition)).database; console.log('init db');
   container = (await database.containers.createIfNotExists(collectionDefinition)).container;
+  memoryCache.put(CACHE_KEY_DATA_CACHE, {});
+  initialized = true;
 }
 init();
  
@@ -48,47 +54,59 @@ async function query(start, end) {
 function withCache(queryFunc) {
   return async function(start, end) {
     try {
-      let os = start, oe = end;
-      if (cache.start === start && cache.end === end) {
-        start = cache.lastTimestamp;
-        console.log('cache hit');
+      if(!initialized) await init();
+      let cacheKey = start+'-'+end;
+      let log = {};
+      let allCache = memoryCache.get(CACHE_KEY_DATA_CACHE);
+      let cacheItem = allCache[cacheKey];
+      if (cacheItem) {
+        start = cacheItem.lastTimestamp;
+        // console.log('cache hit');
+        log.cacheHit = true;
       } else {
-        cache = {
-          start: null,
-          end: null,
-          lastTimestamp: null,
-          data: []
-        }
-        console.log('cache miss')
+        // console.log('cache miss');
+        log.cacheHit = false;
       }
-      console.log(memoryCache.get('requestInProgress'))
       if (memoryCache.get('requestInProgress')) {
         console.log(`There's a request in progress, skip`);
-        return {result: []};
+        log.skipThisRequest = true;
+        return {result: [], log};
       }
       memoryCache.put('requestInProgress', true);
-      console.log('set flag to true')
+      // console.log('set flag to true')
       let queryResult = await queryFunc(start, end);
       memoryCache.put('requestInProgress', false);
-      console.log('set flag to false, query result is', JSON.stringify(queryResult))
-      let lastTimestamp = -8640000000000000;
+      // console.log('set flag to false, query result is', JSON.stringify(queryResult))
+      let lastTimestamp = queryResult.result[queryResult.result.length - 1].timestamp;
       for (let point of queryResult.result) {
         let t = parseInt(point.timestamp);
         if (t > lastTimestamp) lastTimestamp = t;
       }
-      if(queryResult.result.length !== 0) {
-        cache.start = os;
-        cache.end = end;
-        cache.lastTimestamp = lastTimestamp;
-        cache.data.push(...queryResult.result);
-        console.log('cache updated');
+      if(!cacheItem) {
+        cacheItem = {
+          start,
+          end,
+          lastTimestamp,
+          data: queryResult.result
+        }
+      }else {
+        cacheItem.lastTimestamp = lastTimestamp;
+        for (let point of queryResult.result) {
+          if(cacheItem.data.includes(point.id)){
+            console.log(`Item duplicated with cache, skip`);
+            continue;
+          } 
+          cacheItem.data.push(point);
+        }
       }
+      allCache[cacheKey] = cacheItem;
+      memoryCache.put(CACHE_KEY_DATA_CACHE, allCache);
       
-      return {result: cache.data};
+      return {result: cacheItem.data, log};
     } catch (e) {
       memoryCache.put('requestInProgress', false);
       console.log(`Error: ${(e)}`);
-      return {result: [], error: true};
+      return {result: [], log: {error: JSON.stringify(e)}};
     }
   }
 }
@@ -144,6 +162,7 @@ router.get('/', async (req, res) => {
   }));  
   res.json({
     values,
+    log: result.log,
     error: result.error,
     scope: {
       // minX: 0,
