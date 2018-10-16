@@ -120,6 +120,7 @@ router.get('/', (req, res) => {
   for(let [k,v] of peoples) {
     values.push(...v.points);
   }
+  values.sort((a,b)=>a.timestamp-b.timestamp);
   values = values.map(p => ({
     id: p.track_id,
     uuid: uuid(),
