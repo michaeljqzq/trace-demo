@@ -14,6 +14,7 @@ const documentDefinition = { id: 'hello world doc', content: 'Hello World!' };
 
 let database = null;
 let container = null;
+let now = new Date();
  
 async function insertData(item) {
   if(!database) database = (await client.databases.createIfNotExists(databaseDefinition)).database;
@@ -31,7 +32,8 @@ async function clear() {
   await container.delete();
 }
 
-const NUM_OF_PEOPLE = 3;
+const NUM_OF_PEOPLE = 30;
+const NUM_OF_ACTIVE = 5;
 const MAXX = constant.CAMERA_LIMIT_X;
 const MAXY = constant.CAMERA_LIMIT_Y;
 const MAXSPEED = 50;
@@ -75,7 +77,12 @@ async function init() {
 }
 
 async function generateRandomPoint() {
+  let index = 0;
   for (let [k,v] of peoples) {
+    if(new Date() - now > 20 * 1000 && index >= NUM_OF_ACTIVE) {
+      break;
+    }
+    index++;
     let lastPoint = v.points[v.points.length-1];
     if(lastPoint == undefined) return;
     let deltaX = lastPoint.deltaX + (Math.random() - 0.5) * DIR_CHANGE_RATE;
@@ -130,8 +137,10 @@ router.get('/', (req, res) => {
     }
   });
 });
+
 init();
   interval = setInterval(generateRandomPoint, 1000);
+
 router.get('/start', (req, res) => {
   init();
   interval = setInterval(generateRandomPoint, 1000);
