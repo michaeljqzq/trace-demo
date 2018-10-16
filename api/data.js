@@ -20,6 +20,12 @@ let cache = {
   lastTimestamp: null,
   data: []
 }
+
+async function init() {
+  database = (await client.databases.createIfNotExists(databaseDefinition)).database; console.log('init db');
+  container = (await database.containers.createIfNotExists(collectionDefinition)).container;
+}
+init();
  
 async function query(start, end) {
   if(!database) {database = (await client.databases.createIfNotExists(databaseDefinition)).database; console.log('init db')}
