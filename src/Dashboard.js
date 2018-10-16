@@ -157,7 +157,7 @@ class Dashboard extends Component {
           points={v.points.reduce((acc,cur)=>{acc.push(cur.x,cur.y);return acc;}, [])}
           onMouseEnter={hoverFunction}
           onMouseLeave={this.onLeaveElement}
-          key={k+"l1"}
+          key={"l1-"+k}
         />
       });
 
@@ -174,7 +174,7 @@ class Dashboard extends Component {
             points={lessThan40Points.reduce((acc,cur)=>{acc.push(cur.x,cur.y);return acc;}, [])}
             onMouseEnter={hoverFunction}
             onMouseLeave={this.onLeaveElement}
-            key={k+"l2"}
+            key={"l2-"+k}
           />
         });
       }
@@ -191,7 +191,7 @@ class Dashboard extends Component {
             points={lessThan20Points.reduce((acc,cur)=>{acc.push(cur.x,cur.y);return acc;}, [])}
             onMouseEnter={hoverFunction}
             onMouseLeave={this.onLeaveElement}
-            key={k+"l3"}
+            key={"l3-"+k}
           />
         });
       }
@@ -207,7 +207,7 @@ class Dashboard extends Component {
             white={true}
             onMouseEnter={hoverFunction}
             onMouseLeave={this.onLeaveElement}
-            key={k+"d1"}
+            key={"d1"+k}
           />
         });
 
@@ -225,7 +225,7 @@ class Dashboard extends Component {
               labelColor={constant.COLOR_ACTIVE_SCHEMA[v.colorSchema].COLOR_TIME_LABEL} 
               onMouseEnter={hoverFunction}
               onMouseLeave={this.onLeaveElement}
-              key={k+"d2"+point.uuid}
+              key={"d2"+point.uuid}
             />
           });
         }

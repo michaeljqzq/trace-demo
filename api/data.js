@@ -88,7 +88,7 @@ function withCache(queryFunc) {
     } catch (e) {
       memoryCache.put('requestInProgress', false);
       console.log(`Error: ${(e)}`);
-      return {result: []};
+      return {result: [], error: true};
     }
   }
 }
@@ -133,8 +133,8 @@ function withCache(queryFunc) {
 const q = withCache(query);
 
 router.get('/', async (req, res) => {
-  let {result : values} = await q(parseInt(req.query.start), parseInt(req.query.end));
-  
+  let result = await q(parseInt(req.query.start), parseInt(req.query.end));
+  let values = result.result;
   values = values.map(p => ({
     id: p.track_id,
     uuid: p.id,
@@ -144,6 +144,7 @@ router.get('/', async (req, res) => {
   }));  
   res.json({
     values,
+    error: result.error,
     scope: {
       // minX: 0,
       maxX: constant.CAMERA_LIMIT_X,

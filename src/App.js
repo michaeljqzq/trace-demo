@@ -28,7 +28,7 @@ class App extends Component {
     data: new Map(),
     showSettings: false,
     showInactivePath: true,
-    startDate: moment().add(-1,'day').hour(19).minute(45).second(0).millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
+    startDate: moment().hour(0).minute(0).second(0).millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
     logFactor: 10,
   }
 
