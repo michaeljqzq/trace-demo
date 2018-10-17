@@ -5,7 +5,8 @@ const cosmos = require('@azure/cosmos');
 const CosmosClient = cosmos.CosmosClient;
 const constant = require('../src/constant');
 var memoryCache = require('memory-cache');
- 
+const sizeof = require('object-sizeof');
+
 const client = new CosmosClient({ endpoint: constant.DB_HOST, auth: { masterKey: constant.DB_KEY } });
  
 const databaseDefinition = { id: constant.DB_DATABASE_ID };
@@ -166,6 +167,26 @@ router.get('/', async (req, res) => {
       // miny: 0,
       maxY: constant.CAMERA_LIMIT_Y,
     }
+  });
+});
+
+router.get('/cache/get', async (req, res) => {
+  let cache = memoryCache.get(CACHE_KEY_DATA_CACHE);
+  let number = 0;
+  if(cache) {
+    number = Object.keys(cache).length;
+  }
+  res.json({
+    cacheNumber: number,
+    cacheSize: sizeof(cache),
+  });
+});
+
+router.get('/cache/delete', async (req, res) => {
+  let number = memoryCache.put(CACHE_KEY_DATA_CACHE, {});
+
+  res.json({
+    cacheNumber: number
   });
 });
 
