@@ -60,7 +60,7 @@ function withCache(queryFunc) {
       let allCache = memoryCache.get(CACHE_KEY_DATA_CACHE);
       let cacheItem = allCache[cacheKey];
       if (cacheItem) {
-        start = cacheItem.lastTimestamp;
+        start = cacheItem.lastTimestamp == null ? start : cacheItem.lastTimestamp;
         // console.log('cache hit');
         log.cacheHit = true;
       } else {
@@ -77,11 +77,7 @@ function withCache(queryFunc) {
       let queryResult = await queryFunc(start, end);
       memoryCache.put('requestInProgress', false);
       // console.log('set flag to false, query result is', JSON.stringify(queryResult))
-      let lastTimestamp = queryResult.result[queryResult.result.length - 1].timestamp;
-      for (let point of queryResult.result) {
-        let t = parseInt(point.timestamp);
-        if (t > lastTimestamp) lastTimestamp = t;
-      }
+      let lastTimestamp = queryResult.result.length == 0 ? null : queryResult.result[queryResult.result.length - 1].timestamp;
       if(!cacheItem) {
         cacheItem = {
           start,
@@ -92,7 +88,7 @@ function withCache(queryFunc) {
       }else {
         cacheItem.lastTimestamp = lastTimestamp;
         for (let point of queryResult.result) {
-          if(cacheItem.data.includes(point.id)){
+          if(cacheItem.data.find(p => p.id === point.id)){
             console.log(`Item duplicated with cache, skip`);
             continue;
           } 
