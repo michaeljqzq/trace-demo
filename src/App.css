@@ -17,3 +17,7 @@
 .rdtPicker {
   top: -300px;
 }
+
+.rdt-submit, .rdt-dt {
+  display: inline-block;
+}

@@ -28,7 +28,7 @@ class App extends Component {
     data: new Map(),
     showSettings: true,
     showInactivePath: true,
-    startDate: moment().hour(17).minute(0).second(0).millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
+    startDate: moment().hour(0).minute(0).second(0).millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
     logFactor: 10,
   }
 
@@ -112,6 +112,7 @@ class App extends Component {
     console.log('App component mounted');
     this.fetchBackgroundImage();
     setInterval(this.refresh, 1000 * constant.WEB_REFRESH_INTERVAL);
+    this.tempStartDate = this.state.startDate;
   }
 
   onMouseOver = () => {
@@ -136,13 +137,25 @@ class App extends Component {
 
   handleChange = (date) => {
     console.log(`date onchange called with ${date}`)
-    if(date > moment()) {
-      alert('selected date is later than now');
-      return;
+    this.tempStartDate = date;
+  }
+
+  onTimeSubmit = () => {
+    let date = this.tempStartDate;
+    if(date !== this.state.startDate) {
+      if(typeof date === "string") {
+        alert('invalid date');
+        return;
+      }
+      if(date > moment()) {
+        alert('selected date is later than now');
+        return;
+      }
+      console.log(`date setState called with ${date}`)
+      this.setState({
+        startDate: date
+      });
     }
-    this.setState({
-      startDate: date
-    });
   }
 
   render() {
@@ -175,8 +188,10 @@ class App extends Component {
           <DateTime 
             defaultValue={this.state.startDate}
             timeFormat='HH:mm'
+            className='rdt-dt'
             onBlur={this.handleChange}
           />
+          <div className="rdt-submit"><input type="submit" value="√" onClick={this.onTimeSubmit}/></div>
           </div>
         }
       
