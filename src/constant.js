@@ -46,11 +46,7 @@ const constant = {
   CAMERA_LIMIT_X: 1920,
   CAMERA_LIMIT_Y: 1080,
   FONT_FAMILY: 'Helvetica Neue',
-
-  DB_HOST: "https://techsummitdemo.documents.azure.com:443/",
-  DB_KEY: "YQxOABk7IleRNoc6jcglAYXoRiCldTVLpfk5GjWz6MrpOGADnO0LQUmZZInAl7gKrmKeokt7HvCVluvN37XAPA==",
-  DB_DATABASE_ID: "ToDoList",
-  DB_COLLECTION_ID: "Items",
+  USE_FAKE_DATA: false,
 }
 
 module.exports = constant;

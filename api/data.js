@@ -7,10 +7,19 @@ const constant = require('../src/constant');
 var memoryCache = require('memory-cache');
 const sizeof = require('object-sizeof');
 
-const client = new CosmosClient({ endpoint: constant.DB_HOST, auth: { masterKey: constant.DB_KEY } });
+const DB_HOST = process.env.DB_HOST;
+const DB_KEY = process.env.DB_KEY;
+const DB_DATABASE_ID = process.env.DB_DATABASE_ID;
+const DB_COLLECTION_ID = process.env.DB_COLLECTION_ID;
+
+if(!DB_HOST || !DB_KEY || !DB_DATABASE_ID || !DB_COLLECTION_ID) {
+  console.log('Error: env for DB is not configured, check DB_HOST, DB_KEY, DB_DATABASE_ID, DB_COLLECTION_ID');
+}
+
+const client = new CosmosClient({ endpoint: DB_HOST, auth: { masterKey: DB_KEY } });
  
-const databaseDefinition = { id: constant.DB_DATABASE_ID };
-const collectionDefinition = { id: constant.DB_COLLECTION_ID };
+const databaseDefinition = { id: DB_DATABASE_ID };
+const collectionDefinition = { id: DB_COLLECTION_ID };
 const documentDefinition = { id: 'hello world doc', content: 'Hello World!' };
 
 const CACHE_KEY_DATA_CACHE = "dataCache";
