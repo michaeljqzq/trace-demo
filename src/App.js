@@ -26,7 +26,7 @@ class App extends Component {
     background: BackgroundImage,
     timeLimit: null,
     data: new Map(),
-    showSettings: true,
+    showSettings: false,
     showInactivePath: true,
     startDate: moment().hour(0).minute(0).second(0).millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
     logFactor: 10,
