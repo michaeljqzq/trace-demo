@@ -104,7 +104,9 @@ class App extends Component {
         point.y = this.getY(point.y, data.scope.maxY);
         return point;
       }) 
-
+      if(data.log && data.log.skipThisRequest) {
+        return;
+      }
       this.setState({
         data: pointArray,
       })
