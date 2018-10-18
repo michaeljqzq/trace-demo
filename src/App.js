@@ -56,20 +56,25 @@ class App extends Component {
     fetch('/api/backend/background')
       .then(res => {
         if(res.ok) {
-          if(hardRefresh) {
-            this.setState({
-              background: ''
-            },() => {
+          res.json().then(json => {
+            let bg = BackgroundImage;
+            if(json && json.url) {
+              bg = json.url;
+            }
+            if(hardRefresh) {
               this.setState({
-                background: '/api/backend/background'
+                background: ''
+              },() => {
+                this.setState({
+                  background: bg
+                });
               });
-            });
-          }else {
-            this.setState({
-              background: '/api/backend/background'
-            });
-          }
-          
+            }else {
+              this.setState({
+                background: bg
+              });
+            }
+          })
         }
       })
   }

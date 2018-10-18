@@ -6,7 +6,9 @@ var multer  = require('multer');
 var upload = multer({})
 
 router.get('/background', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'upload/background-image'));
+  res.json({
+    url: process.env.BACKGROUND_URL
+  });
 });
 
 router.post('/background', upload.single('file'), (req, res) => {
