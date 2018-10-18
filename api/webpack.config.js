@@ -1,5 +1,5 @@
 const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './index.js',
@@ -10,7 +10,8 @@ module.exports = {
   target: 'node',
   plugins: [
     new CopyWebpackPlugin([
-      { from: 'web.config', to: '.' }
+      { from: 'web.config', to: '.' },
+      { from: './bin/Devbridge.BasicAuthentication.dll', to: './bin' },
     ])
   ]
 };
