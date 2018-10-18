@@ -15,6 +15,7 @@
   "scripts": {
     "local-start": "react-scripts start",
     "build": "react-scripts build",
+    "build-all": "npm run build && cd api && npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "api": "nodemon api/index.js"
