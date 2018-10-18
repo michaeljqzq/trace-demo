@@ -6,16 +6,6 @@ const constant = {
     COLOR_LESS_40: "rgb(63,152,190)",
     COLOR_MORE_40: "rgb(50,82,119)",
     COLOR_TIME_LABEL: "rgb(7,32,40)",
-  },{
-    COLOR_LESS_20: "#FF51D9",
-    COLOR_LESS_40: "#AB5387",
-    COLOR_MORE_40: "#613A51",
-    COLOR_TIME_LABEL: "rgb(44,20,34)",
-  },{
-    COLOR_LESS_20: "#04FF03",
-    COLOR_LESS_40: "#51894B",
-    COLOR_MORE_40: "#3A5137",
-    COLOR_TIME_LABEL: "rgb(11,33,5)",
   }],
   COLOR_INACTIVE: "rgb(29,44,78)",
   COLOR_INACTIVE_HOVER: "#2152C3",
