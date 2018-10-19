@@ -28,7 +28,7 @@ class App extends Component {
     data: new Map(),
     showSettings: false,
     showInactivePath: true,
-    startDate: moment().add(-10, 'minute').millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
+    startDate: moment().add(-10, 'minute').second(0).millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
     logFactor: 10,
   }
 
@@ -109,7 +109,8 @@ class App extends Component {
       }
       this.setState({
         data: pointArray,
-      })
+      });
+      setTimeout(this.refresh, 1000 * constant.WEB_REFRESH_INTERVAL);
     }).catch(e => {
       console.error(e);
     });
@@ -118,7 +119,7 @@ class App extends Component {
   componentDidMount() {
     console.log('App component mounted');
     this.fetchBackgroundImage();
-    setInterval(this.refresh, 1000 * constant.WEB_REFRESH_INTERVAL);
+    this.refresh();
     this.tempStartDate = this.state.startDate;
   }
 

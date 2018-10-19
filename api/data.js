@@ -77,15 +77,15 @@ function withCache(queryFunc) {
         // console.log('cache miss');
         log.cacheHit = false;
       }
-      if (memoryCache.get('requestInProgress')) {
-        console.log(`There's a request in progress, skip`);
-        log.skipThisRequest = true;
-        return {result: [], log};
-      }
-      memoryCache.put('requestInProgress', true);
+      // if (memoryCache.get('requestInProgress')) {
+      //   console.log(`There's a request in progress, skip`);
+      //   log.skipThisRequest = true;
+      //   return {result: [], log};
+      // }
+      // memoryCache.put('requestInProgress', true);
       // console.log('set flag to true')
       let queryResult = await queryFunc(start, end);
-      memoryCache.put('requestInProgress', false);
+      // memoryCache.put('requestInProgress', false);
       // console.log('set flag to false, query result is', JSON.stringify(queryResult))
       let lastTimestamp = queryResult.result.length == 0 ? null : queryResult.result[queryResult.result.length - 1].timestamp;
       if(!cacheItem) {
@@ -110,7 +110,7 @@ function withCache(queryFunc) {
       
       return {result: cacheItem.data, log};
     } catch (e) {
-      memoryCache.put('requestInProgress', false);
+      // memoryCache.put('requestInProgress', false);
       console.log(`Error: ${(e)}`);
       return {result: [], log: {error: JSON.stringify(e)}};
     }
