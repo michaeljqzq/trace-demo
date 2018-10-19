@@ -147,6 +147,35 @@ class Dashboard extends Component {
         default:
           longestPathStrokeColor = 'black';
       }
+      let moreThan40Points = [];
+      let lessThan40Points = [];
+      let lessThan20Points = [];
+
+      let i = 0;
+      for(;i<v.points.length;i++) {
+        let point = v.points[i];
+        if((now - point.time) > 40 * 1000) {
+          moreThan40Points.push(point);
+        }else {
+          moreThan40Points.push(point);
+          break;
+        }
+      }
+      for(;i<v.points.length;i++) {
+        let point = v.points[i];
+        if((now - point.time) > 20 * 1000) {
+          lessThan40Points.push(point);
+        }else {
+          lessThan40Points.push(point);
+          break;
+        }
+      }
+      for(;i<v.points.length;i++) {
+        let point = v.points[i];
+        lessThan20Points.push(point);
+      }
+
+      let tempPoints = displayMode === constant.DISPLAY_ACTIVE ? moreThan40Points : v.points;
       elementStack.push({
         priority: v.points.length === 0 ? 0 : v.points[0].time + offset,
         element: <Line stroke={longestPathStrokeColor}
@@ -154,15 +183,13 @@ class Dashboard extends Component {
           // lineJoin="round"
           // lineCap="round"
           tension={0.5}
-          points={v.points.reduce((acc,cur)=>{acc.push(cur.x,cur.y);return acc;}, [])}
+          points={tempPoints.reduce((acc,cur)=>{acc.push(cur.x,cur.y);return acc;}, [])}
           onMouseEnter={hoverFunction}
           onMouseLeave={this.onLeaveElement}
           key={"l1-"+k}
         />
       });
-
       
-      let lessThan40Points = v.points.filter(p => (now - p.time) <= 40 * 1000);
       if(displayMode === constant.DISPLAY_ACTIVE) {
         elementStack.push({
           priority: lessThan40Points.length === 0 ? 0 : lessThan40Points[0].time + offset + 1,
@@ -179,7 +206,7 @@ class Dashboard extends Component {
         });
       }
 
-      let lessThan20Points = lessThan40Points.filter(p => (now - p.time) <= 20 * 1000);
+      
       if(displayMode === constant.DISPLAY_ACTIVE) {
         elementStack.push({
           priority: lessThan20Points.length === 0 ? 0 : lessThan20Points[0].time + offset + 2,
