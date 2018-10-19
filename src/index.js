@@ -3,11 +3,17 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
+import Login from './Login';
+
+function checkAuth() {
+  return !!localStorage.getItem('token');
+}
 
 ReactDOM.render(<Router>
   <div>
-    <Route path="/" component={App} />
+    <Route path={`/login`} component={Login} />
+    <Route path='/' render={()=> checkAuth() ? <App /> : <Redirect to={`/login`} />}/>
   </div>
 </Router>, document.getElementById('root'));
 

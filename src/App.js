@@ -32,28 +32,32 @@ class App extends Component {
     logFactor: 10,
   }
 
-  handleUpload = (ev) => {
-    ev.preventDefault();
+  // handleUpload = (ev) => {
+  //   ev.preventDefault();
 
-    const data = new FormData();
-    data.append('file', this.uploadInput.files[0]);
+  //   const data = new FormData();
+  //   data.append('file', this.uploadInput.files[0]);
 
-    fetch('/api/backend/background', {
-      method: 'POST',
-      body: data,
-    })
-      .then(res => {
-        if(res.ok) {
-          this.fetchBackgroundImage(true);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
+  //   fetch('/api/backend/background', {
+  //     method: 'POST',
+  //     body: data,
+  //   })
+  //     .then(res => {
+  //       if(res.ok) {
+  //         this.fetchBackgroundImage(true);
+  //       }
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }
 
   fetchBackgroundImage = (hardRefresh) => {
-    fetch('/api/backend/background')
+    fetch('/api/backend/background', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    })
       .then(res => {
         if(res.ok) {
           res.json().then(json => {
@@ -88,7 +92,11 @@ class App extends Component {
   }
 
   refresh = () => {
-    fetch(`/api/${constant.USE_FAKE_DATA ? 'fake': 'data'}?start=${this.state.startDate.valueOf()}&end=${this.state.startDate.clone().hour(23).minute(59).second(59).millisecond(999).valueOf()}&disableCache=${+new Date()}`).then(results => results.json()).then(data => {
+    fetch(`/api/${constant.USE_FAKE_DATA ? 'fake': 'data'}?start=${this.state.startDate.valueOf()}&end=${this.state.startDate.clone().hour(23).minute(59).second(59).millisecond(999).valueOf()}&disableCache=${+new Date()}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    }).then(results => results.json()).then(data => {
       
       let now = new Date();
       let pointArray = data.values;
@@ -188,9 +196,9 @@ class App extends Component {
         opacity: isRouteHeatmap ? 0.5 : 1,
     }
     return (<div className='app' id='app' style={backgroundStyle}>
-      <form className="hidden-form" onChange={this.handleUpload} action="/api/backend/background" method="post" encType="multipart/form-data">
+      {/* <form className="hidden-form" onChange={this.handleUpload} action="/api/backend/background" method="post" encType="multipart/form-data">
           <input ref={r=> {this.uploadInput = r}} type="file" name="background" />
-        </form>
+        </form> */}
         {
           this.state.showSettings && <div className="date-picker" style={datePickerStyle} >
           <DateTime 
