@@ -11,7 +11,6 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
       { from: 'web.config', to: '.' },
-      { from: './bin/Devbridge.BasicAuthentication.dll', to: './bin' },
     ])
   ]
 };
