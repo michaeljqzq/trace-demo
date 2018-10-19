@@ -1,5 +1,5 @@
 const constant = {
-  WEB_REFRESH_INTERVAL: 1,
+  WEB_REFRESH_INTERVAL: 0.7,
   COLOR_DOT_CORE: "black",
   COLOR_ACTIVE_SCHEMA: [{
     COLOR_LESS_20: "rgb(66,255,246)",
