@@ -193,7 +193,7 @@ class App extends Component {
       backgroundSize: `cover`,
         width: window.innerWidth,
         height: window.innerHeight,
-        opacity: isRouteHeatmap ? 0.5 : 1,
+        opacity: isRouteHeatmap ? 0.99: 1,
     }
     return (<div className='app' id='app' style={backgroundStyle}>
       {/* <form className="hidden-form" onChange={this.handleUpload} action="/api/backend/background" method="post" encType="multipart/form-data">
