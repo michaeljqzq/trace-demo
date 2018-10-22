@@ -179,9 +179,9 @@ class Dashboard extends Component {
       elementStack.push({
         priority: v.points.length === 0 ? 0 : v.points[0].time + offset,
         element: <Line stroke={longestPathStrokeColor}
-          strokeWidth={constant.PATH_STROKE_WIDTH}
-          // lineJoin="round"
-          // lineCap="round"
+          strokeWidth={displayMode === constant.DISPLAY_ACTIVE ? constant.PATH_STROKE_WIDTH : constant.PATH_STROKE_WIDTH_INACTIVE}
+          lineJoin="round"
+          lineCap="round"
           tension={0.5}
           points={tempPoints.reduce((acc,cur)=>{acc.push(cur.x,cur.y);return acc;}, [])}
           onMouseEnter={hoverFunction}
