@@ -5,6 +5,7 @@ import BackgroundImage from './asset/bg.jpg';
 import constant from './constant';
 import Dashboard from './Dashboard';
 import Heatmap from './Heatmap';
+import Loading from './Loading';
 import RouterSelector from './RouterSelector';
 import { withRouter } from 'react-router-dom';
 import GeneralSelector from './GeneralSelector';
@@ -30,6 +31,7 @@ class App extends Component {
     showInactivePath: true,
     startDate: moment().add(-10, 'minute').second(0).millisecond(0), //.add(-10, 'minute'), //.hour(0).minute(0).second(0).millisecond(0),
     logFactor: 10,
+    loading: false,
   }
 
   // handleUpload = (ev) => {
@@ -91,7 +93,16 @@ class App extends Component {
     return y / max * window.innerHeight;
   }
 
-  refresh = () => {
+  refresh = (init) => {
+    if(init) {
+      if(this.scheduledRefresh != null) {
+        clearTimeout(this.scheduledRefresh);
+        this.scheduledRefresh = null;
+      }
+      this.setState({
+        loading: true
+      });
+    }
     fetch(`/api/${constant.USE_FAKE_DATA ? 'fake': 'data'}?start=${this.state.startDate.valueOf()}&end=${this.state.startDate.clone().hour(23).minute(59).second(59).millisecond(999).valueOf()}&disableCache=${+new Date()}`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -115,10 +126,12 @@ class App extends Component {
       if(data.log && data.log.skipThisRequest) {
         return;
       }
-      this.setState({
+      let newState = {
         data: pointArray,
-      });
-      setTimeout(this.refresh, 1000 * constant.WEB_REFRESH_INTERVAL);
+      };
+      if(init) newState.loading = false;
+      this.setState(newState);
+      this.scheduledRefresh = setTimeout(this.refresh, 1000 * constant.WEB_REFRESH_INTERVAL);
     }).catch(e => {
       console.error(e);
     });
@@ -127,7 +140,7 @@ class App extends Component {
   componentDidMount() {
     console.log('App component mounted');
     this.fetchBackgroundImage();
-    this.refresh();
+    this.refresh(true);
     this.tempStartDate = this.state.startDate;
   }
 
@@ -170,6 +183,8 @@ class App extends Component {
       console.log(`date setState called with ${date}`)
       this.setState({
         startDate: date
+      }, () => {
+        this.refresh(true);
       });
     }
   }
@@ -242,6 +257,7 @@ class App extends Component {
         </Layer>
                 
         <Layer>
+          <Loading loading={this.state.loading} />
           <Path 
               x={window.innerWidth - 50}
               y={window.innerHeight - 90}
