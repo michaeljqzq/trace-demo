@@ -43,7 +43,7 @@ class Label extends React.Component {
           onMouseLeave={this.props.onMouseLeave}
           // key={"label1-"+this.props.key}
           />
-        <Text x={this.state.rectX + constant.LABEL_TEXT_LR_PADDING} y={this.state.rectY} ref={ r => {this.textRef = r;}} text={this.props.labelText}
+        <Text x={this.state.rectX + constant.LABEL_TEXT_LR_PADDING} y={this.state.rectY-1} ref={ r => {this.textRef = r;window.mj =r;}} text={this.props.labelText}
           fontFamily={constant.FONT_FAMILY}
           fontStyle={constant.FONT_STYLE}
           fontSize={20}
@@ -51,7 +51,8 @@ class Label extends React.Component {
           fill='white'
           align='center' 
           onMouseEnter={this.props.onMouseEnter}
-          onMouseLeave={this.props.onMouseLeave} 
+          onMouseLeave={this.props.onMouseLeave}
+          verticalAlign='middle' 
           // key={"label2-"+this.props.key}
           />
         <Rect x={this.props.x - constant.LABEL_PIN_WIDTH / 2} y={this.props.y - constant.LABEL_PIN_HEIGHT} 
