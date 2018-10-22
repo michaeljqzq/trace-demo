@@ -35,7 +35,8 @@ const constant = {
   ROUTER_PATH_HEATMAP: 'heatmap',
   CAMERA_LIMIT_X: 1920,
   CAMERA_LIMIT_Y: 1080,
-  FONT_FAMILY: 'Helvetica Neue',
+  FONT_FAMILY: 'Segoe UI',
+  FONT_STYLE: '700',
   USE_FAKE_DATA: false,
 }
 

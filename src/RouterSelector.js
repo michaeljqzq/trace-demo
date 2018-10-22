@@ -38,6 +38,7 @@ class RouterSelector extends React.Component {
             width={constant.ROUTER_SELECTOR_WIDTH}
             height={constant.ROUTER_SELECTOR_HEIGHT}
             fontFamily={constant.FONT_FAMILY}
+            fontStyle={constant.FONT_STYLE}
             fontSize={15}
             fill={this.props.selected ? 'black' : 'white'}
             align='center' 

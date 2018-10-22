@@ -45,6 +45,7 @@ class Label extends React.Component {
           />
         <Text x={this.state.rectX + constant.LABEL_TEXT_LR_PADDING} y={this.state.rectY} ref={ r => {this.textRef = r;}} text={this.props.labelText}
           fontFamily={constant.FONT_FAMILY}
+          fontStyle={constant.FONT_STYLE}
           fontSize={20}
           padding={5}
           fill='white'
