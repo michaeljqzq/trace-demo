@@ -108,6 +108,11 @@ class Dashboard extends Component {
     
     let pointMap = this.handlePoints(this.props.data);
     let now = new Date();
+    let activePathNum = 0;
+    for(let v of pointMap.values()) {
+      if(v.active) activePathNum++;
+    }
+    console.log(`Number of active paths: ${activePathNum}`);
 
     let elementStack = [];
     for(let [k,v] of pointMap) {
@@ -139,7 +144,8 @@ class Dashboard extends Component {
           longestPathStrokeColor = constant.COLOR_ACTIVE_SCHEMA[v.colorSchema].COLOR_MORE_40;
           break;
         case constant.DISPLAY_INACTIVE:
-          longestPathStrokeColor = constant.COLOR_INACTIVE;
+          if(activePathNum === 0) longestPathStrokeColor = constant.COLOR_INACTIVE_WHEN_NO_ACTIVE_PATH;
+          else longestPathStrokeColor = constant.COLOR_INACTIVE;
           break;
         case constant.DISPLAY_INACTIVE_HOVER:
           longestPathStrokeColor = constant.COLOR_INACTIVE_HOVER;

@@ -25,7 +25,7 @@ class RouterSelector extends React.Component {
             height={constant.ROUTER_SELECTOR_HEIGHT}
             x={this.props.x}
             y={constant.ROUTER_SELECTOR_HEIGHT * 1.5}
-            fill={this.props.selected ? 'white' : 'black'}
+            fill={this.props.selected ? 'white' : ''}
             stroke="white"
             onClick={this.onClick.bind(null, this.props.path)}
             onMouseOver={this.onMouseOver}
