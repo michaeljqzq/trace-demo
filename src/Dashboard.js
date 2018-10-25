@@ -169,7 +169,7 @@ class Dashboard extends Component {
       }
       for(;i<v.points.length;i++) {
         let point = v.points[i];
-        if((now - point.time) > 20 * 1000) {
+        if((now - point.time) > 30 * 1000) {
           lessThan40Points.push(point);
         }else {
           lessThan40Points.push(point);
